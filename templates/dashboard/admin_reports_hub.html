@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+{% block meta_description %}Official Antique Hub audit reports repository. Generate and export PDF and CSV reports for users, antique catalog, orders, sales, payments, and stock.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container-fluid px-lg-4 mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:admin_dashboard' %}">Admin Console</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Audit Reports Hub</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-2 page-min-height pb-5">
+
+    <div class="row g-4 align-items-start">
+        <!-- Sidebar Navigation Column -->
+        <div class="col-lg-3 col-md-4">
+            {% include 'dashboard/admin_sidebar.html' %}
+        </div>
+
+        <!-- Main Content Column -->
+        <div class="col-lg-9 col-md-8 admin-content-min-height">
+            <!-- Header Banner -->
+            <div class="card card-antique p-4 mb-4 border-warning border-opacity-25 shadow-sm">
+                <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-1 mb-2 d-inline-block" style="width: fit-content;">
+                    <i class="bi bi-file-earmark-bar-graph me-1"></i> AUDIT &amp; REPORTING ENGINE
+                </span>
+                <h2 class="brand-font text-white mb-1">Administrative Audit Reports</h2>
+                <p class="text-white-50 small mb-0">
+                    Comprehensive reporting suite with flexible date filters, summary statistics, and one-click <strong>CSV &amp; PDF</strong> export for compliance and auditing.
+                </p>
+            </div>
+
+            <!-- 6 Standard Reports Grid -->
+            <div class="row g-4">
+                <!-- 1. Users Report -->
+                <div class="col-lg-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm d-flex flex-column transition-hover">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle fs-3">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <h4 class="brand-font text-white mb-0">Users &amp; Roles Report</h4>
+                                <small class="text-white-50">Members, Roles, Registration Dates &amp; Statuses</small>
+                            </div>
+                        </div>
+                        <p class="text-white-50 small flex-grow-1">
+                            Audits all registered Collectors, Antique Sellers, and Staff Administrators with contact details, geographical locations, and account activation states.
+                        </p>
+                        <div class="d-flex gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'dashboard:admin_report_users' %}" class="btn btn-sm btn-antique-gold flex-grow-1 fw-bold">
+                                <i class="bi bi-eye me-1"></i> View Report
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_users' %}?export=csv" class="btn btn-sm btn-outline-secondary" title="Quick CSV Export">
+                                <i class="bi bi-filetype-csv"></i> CSV
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_users' %}?export=pdf" class="btn btn-sm btn-outline-danger" title="Quick PDF Export">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Items Report -->
+                <div class="col-lg-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm d-flex flex-column transition-hover">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-3">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                            <div>
+                                <h4 class="brand-font text-white mb-0">Antique Items Report</h4>
+                                <small class="text-white-50">Catalog Valuations, Categories &amp; Provenance</small>
+                            </div>
+                        </div>
+                        <p class="text-white-50 small flex-grow-1">
+                            Comprehensive inventory of verified antique artifacts, SKUs, historical eras, base prices, active stock levels, and associated antique sellers.
+                        </p>
+                        <div class="d-flex gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'dashboard:admin_report_items' %}" class="btn btn-sm btn-antique-gold flex-grow-1 fw-bold">
+                                <i class="bi bi-eye me-1"></i> View Report
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_items' %}?export=csv" class="btn btn-sm btn-outline-secondary" title="Quick CSV Export">
+                                <i class="bi bi-filetype-csv"></i> CSV
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_items' %}?export=pdf" class="btn btn-sm btn-outline-danger" title="Quick PDF Export">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Orders Report -->
+                <div class="col-lg-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm d-flex flex-column transition-hover">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle fs-3">
+                                <i class="bi bi-receipt-cutoff"></i>
+                            </div>
+                            <div>
+                                <h4 class="brand-font text-white mb-0">Master Orders Report</h4>
+                                <small class="text-white-50">Customer Purchases, Statuses &amp; Shipping Charges</small>
+                            </div>
+                        </div>
+                        <p class="text-white-50 small flex-grow-1">
+                            Chronological procurement ledger tracking customer purchase orders, fulfillment lifecycle (Pending &rarr; Confivered &rarr; Shipped &rarr; Delivered), and grand totals.
+                        </p>
+                        <div class="d-flex gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'dashboard:admin_report_orders' %}" class="btn btn-sm btn-antique-gold flex-grow-1 fw-bold">
+                                <i class="bi bi-eye me-1"></i> View Report
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_orders' %}?export=csv" class="btn btn-sm btn-outline-secondary" title="Quick CSV Export">
+                                <i class="bi bi-filetype-csv"></i> CSV
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_orders' %}?export=pdf" class="btn btn-sm btn-outline-danger" title="Quick PDF Export">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Sales Report -->
+                <div class="col-lg-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm d-flex flex-column transition-hover">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle fs-3">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                            <div>
+                                <h4 class="brand-font text-white mb-0">Sales &amp; Revenue Report</h4>
+                                <small class="text-white-50">Completed Sales, Gross Turnover &amp; Net Margins</small>
+                            </div>
+                        </div>
+                        <p class="text-white-50 small flex-grow-1">
+                            Audits realized platform commerce turnover, line item breakdowns, shipping charges, and cumulative revenue over custom date windows.
+                        </p>
+                        <div class="d-flex gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'dashboard:admin_report_sales' %}" class="btn btn-sm btn-antique-gold flex-grow-1 fw-bold">
+                                <i class="bi bi-eye me-1"></i> View Report
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_sales' %}?export=csv" class="btn btn-sm btn-outline-secondary" title="Quick CSV Export">
+                                <i class="bi bi-filetype-csv"></i> CSV
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_sales' %}?export=pdf" class="btn btn-sm btn-outline-danger" title="Quick PDF Export">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Payments Report -->
+                <div class="col-lg-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm d-flex flex-column transition-hover">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle fs-3">
+                                <i class="bi bi-credit-card-2-front"></i>
+                            </div>
+                            <div>
+                                <h4 class="brand-font text-white mb-0">Payments Ledger Report</h4>
+                                <small class="text-white-50">Gateway Transactions, Card Networks &amp; Payouts</small>
+                            </div>
+                        </div>
+                        <p class="text-white-50 small flex-grow-1">
+                            PCI-DSS compliant transaction audit records showing unique gateway references, issuing bank entities, payment channels (Card, COD), and settlement timestamps.
+                        </p>
+                        <div class="d-flex gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'dashboard:admin_report_payments' %}" class="btn btn-sm btn-antique-gold flex-grow-1 fw-bold">
+                                <i class="bi bi-eye me-1"></i> View Report
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_payments' %}?export=csv" class="btn btn-sm btn-outline-secondary" title="Quick CSV Export">
+                                <i class="bi bi-filetype-csv"></i> CSV
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_payments' %}?export=pdf" class="btn btn-sm btn-outline-danger" title="Quick PDF Export">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Stock Report -->
+                <div class="col-lg-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm d-flex flex-column transition-hover">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-secondary bg-opacity-25 text-warning p-3 rounded-circle fs-3">
+                                <i class="bi bi-stack"></i>
+                            </div>
+                            <div>
+                                <h4 class="brand-font text-white mb-0">Stock &amp; Depletion Report</h4>
+                                <small class="text-white-50">Warehouse Inventory, Restock Logs &amp; Low-Stock Warnings</small>
+                            </div>
+                        </div>
+                        <p class="text-white-50 small flex-grow-1">
+                            Tracks arrived stock versus currently available units, restock audit dates, depletion rates, and automatic low-stock threshold triggers.
+                        </p>
+                        <div class="d-flex gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'dashboard:admin_report_stock' %}" class="btn btn-sm btn-antique-gold flex-grow-1 fw-bold">
+                                <i class="bi bi-eye me-1"></i> View Report
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_stock' %}?export=csv" class="btn btn-sm btn-outline-secondary" title="Quick CSV Export">
+                                <i class="bi bi-filetype-csv"></i> CSV
+                            </a>
+                            <a href="{% url 'dashboard:admin_report_stock' %}?export=pdf" class="btn btn-sm btn-outline-danger" title="Quick PDF Export">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

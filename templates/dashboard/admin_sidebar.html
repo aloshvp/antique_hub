@@ -1,0 +1,133 @@
+{% load static %}
+<!-- Reusable Admin Console Sidebar (Executive Console Navigation) -->
+<div class="card card-antique border-secondary border-opacity-25 shadow-sm p-3 mb-4 sticky-admin-sidebar" id="adminSidebar">
+    <!-- Admin Profile Badge -->
+    <div class="d-flex align-items-center gap-3 p-2 mb-3 bg-dark bg-opacity-75 rounded-3 border border-secondary border-opacity-25">
+        <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px;">
+            <i class="bi bi-shield-lock-fill fs-5"></i>
+        </div>
+        <div class="overflow-hidden">
+            <div class="fw-bold text-white small text-truncate">{{ user.userprofile.contactname|default:user.username }}</div>
+            <div class="text-warning small font-monospace" style="font-size: 0.72rem;">
+                <i class="bi bi-patch-check-fill me-1"></i>Administrator
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu Groups -->
+    <nav class="nav flex-column gap-1 admin-sidebar-nav">
+        
+        <!-- 1. OVERVIEW & ANALYTICS -->
+        <div class="text-white-50 text-uppercase fw-bold mt-2 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-speedometer2 text-warning me-1"></i> Executive Overview
+        </div>
+        <a href="{% url 'dashboard:admin_dashboard' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if active_menu == 'dashboard' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard Overview
+        </a>
+        <a href="{% url 'dashboard:admin_reports_hub' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if active_menu == 'reports' and not report_type %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-file-earmark-bar-graph-fill me-2"></i> Reports &amp; Exports Hub
+        </a>
+
+        <!-- 2. USER ADMINISTRATION -->
+        <div class="text-white-50 text-uppercase fw-bold mt-3 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-people-fill text-warning me-1"></i> User Administration
+        </div>
+        <a href="{% url 'dashboard:admin_users' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if active_menu == 'users' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-person-gear me-2"></i> Manage All Users
+        </a>
+        <a href="{% url 'accounts:admin_seller_list' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 d-flex justify-content-between align-items-center {% if active_menu == 'sellers' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <span><i class="bi bi-person-check-fill me-2"></i> Verify Sellers</span>
+            {% if pending_sellers_count and pending_sellers_count > 0 %}
+                <span class="badge bg-danger rounded-pill">{{ pending_sellers_count }}</span>
+            {% endif %}
+        </a>
+
+        <!-- 3. GEOGRAPHICAL MASTERS -->
+        <div class="text-white-50 text-uppercase fw-bold mt-3 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-geo-alt-fill text-warning me-1"></i> Geographical Registry Master
+        </div>
+        <a href="{% url 'locations:state_list' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-map me-2"></i> States Ledger
+        </a>
+        <a href="{% url 'locations:district_list' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-pin-map me-2"></i> Districts Ledger
+        </a>
+        <a href="{% url 'locations:location_list' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-geo-alt me-2"></i> Locations / Towns
+        </a>
+
+        <!-- 4. CATALOG & INVENTORY -->
+        <div class="text-white-50 text-uppercase fw-bold mt-3 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-boxes text-warning me-1"></i> Catalog &amp; Inventory
+        </div>
+        <a href="{% url 'catalog:category_list' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-tags-fill me-2"></i> Categories &amp; SubCategories
+        </a>
+        <a href="{% url 'catalog:admin_items' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-box-seam me-2"></i> Manage All Items
+        </a>
+        <a href="{% url 'inventory:admin_stock' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-stack me-2"></i> Stock Management
+        </a>
+        <a href="{% url 'inventory:admin_discounts' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-percent me-2"></i> Promotional Discounts
+        </a>
+
+        <!-- 5. ORDERS & COMMERCE -->
+        <div class="text-white-50 text-uppercase fw-bold mt-3 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-cart-check-fill text-warning me-1"></i> Orders &amp; Financials
+        </div>
+        <a href="{% url 'orders:admin_orders' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-receipt-cutoff me-2"></i> Master Orders Console
+        </a>
+        <a href="{% url 'payments:admin_payments' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-credit-card-2-front me-2"></i> Payment Records Ledger
+        </a>
+
+        <!-- 6. COMMUNITY & KNOWLEDGEBASE -->
+        <div class="text-white-50 text-uppercase fw-bold mt-3 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-chat-heart-fill text-warning me-1"></i> Community &amp; Knowledge
+        </div>
+        <a href="{% url 'community:admin_comments' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-chat-square-dots me-2"></i> Moderate Reviews
+        </a>
+        <a href="{% url 'community:admin_watchlist' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-heart-pulse me-2"></i> Most-Watched Relics
+        </a>
+        <a href="{% url 'community:admin_faq_list' %}" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-question-diamond me-2"></i> Manage FAQs
+        </a>
+
+        <!-- 7. AUDIT REPORTS -->
+        <div class="text-white-50 text-uppercase fw-bold mt-3 mb-1 px-2" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+            <i class="bi bi-printer-fill text-warning me-1"></i> Standard Reports (PDF/CSV)
+        </div>
+        <a href="{% url 'dashboard:admin_report_users' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if report_type == 'users' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-people me-2"></i> Users Report
+        </a>
+        <a href="{% url 'dashboard:admin_report_items' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if report_type == 'items' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-box me-2"></i> Items Report
+        </a>
+        <a href="{% url 'dashboard:admin_report_orders' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if report_type == 'orders' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-bag-check me-2"></i> Orders Report
+        </a>
+        <a href="{% url 'dashboard:admin_report_sales' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if report_type == 'sales' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-cash-stack me-2"></i> Sales Report
+        </a>
+        <a href="{% url 'dashboard:admin_report_payments' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if report_type == 'payments' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-credit-card me-2"></i> Payments Report
+        </a>
+        <a href="{% url 'dashboard:admin_report_stock' %}" class="nav-link text-white-50 py-2 px-3 rounded-2 {% if report_type == 'stock' %}active text-warning bg-dark border-start border-warning border-3 fw-bold{% endif %}">
+            <i class="bi bi-layers me-2"></i> Stock Report
+        </a>
+
+        <!-- 8. EXTERNAL & SHORTCUTS -->
+        <hr class="border-secondary border-opacity-25 my-2">
+        <a href="/admin/" target="_blank" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-database-gear me-2"></i> Django Staff Admin <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+        </a>
+        <a href="{% url 'accounts:home' %}" target="_blank" class="nav-link text-white-50 py-2 px-3 rounded-2">
+            <i class="bi bi-eye me-2"></i> View Buyer Portal <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+        </a>
+    </nav>
+</div>

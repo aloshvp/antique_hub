@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In — Antique Hub Unified Portal{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Single Unified Sign In</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 page-min-height pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <!-- Login Card -->
+            <div class="card card-antique shadow-lg border-0">
+                <!-- Header -->
+                <div class="card-antique-header text-center py-4">
+                    <div class="brand-crest mx-auto mb-2" style="width: 58px; height: 58px; font-size: 1.5rem;">
+                        <i class="bi bi-key-fill text-accent-gold"></i>
+                    </div>
+                    <h3 class="font-serif mb-1">Unified Sign In</h3>
+                    <p class="text-muted small mb-0">One single portal for Admin, Seller, and Buyer</p>
+                </div>
+
+                <!-- Form Body -->
+                <div class="card-body p-4 p-md-5">
+                    <!-- Non-Field Validation Errors -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small mb-4" role="alert">
+                            {% for error in form.non_field_errors %}
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                                    <span>{{ error }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'accounts:login' %}" novalidate id="unifiedLoginForm">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label fw-semibold small text-muted">
+                                <i class="bi bi-person me-1 text-accent-gold"></i> Username
+                            </label>
+                            <input type="text" 
+                                   name="username" 
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                   id="id_username" 
+                                   placeholder="Enter your registered username"
+                                   value="{{ form.username.value|default:'' }}" 
+                                   required 
+                                   autofocus>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.username.errors|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="id_password" class="form-label fw-semibold small text-muted mb-0">
+                                    <i class="bi bi-lock me-1 text-accent-gold"></i> Password
+                                </label>
+                            </div>
+                            <input type="password" 
+                                   name="password" 
+                                   class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                                   id="id_password" 
+                                   placeholder="Enter your account password"
+                                   required>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.password.errors|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-antique-gold w-100 py-2 fs-6 mb-3 shadow-sm" id="loginSubmitBtn">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Sign In to Antique Hub
+                        </button>
+                    </form>
+
+                    <!-- Role Redirection Notice -->
+                    <div class="p-3 bg-light rounded border small text-muted mt-3">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="bi bi-info-circle-fill text-accent-gold me-2"></i>
+                            <strong class="text-dark">Smart Role Routing:</strong>
+                        </div>
+                        <p class="mb-0 small">
+                            Upon authentication, you will be redirected automatically to your designated view:
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1">Admin</span>
+                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle ms-1">Seller</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle ms-1">Buyer</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer Links -->
+                <div class="card-footer bg-light text-center py-3 border-top small">
+                    <span class="text-muted">Need an account?</span>
+                    <a href="{% url 'accounts:home' %}#categoriesSection" class="text-decoration-none fw-semibold ms-1 text-accent-gold hover-gold">
+                        Explore Registration Options
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

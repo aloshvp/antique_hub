@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy | Antique Hub{% endblock %}
+{% block meta_description %}Privacy Policy and collector protection standards at Antique Hub.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3" style="max-width: 800px;">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-3 page-min-height pb-5" style="max-width: 800px;">
+
+    <!-- Clean Header -->
+    <div class="text-center mb-4">
+        <span class="badge-curator-minimal mb-2">
+            <i class="bi bi-shield-check"></i> Privacy Policy
+        </span>
+        <h1 class="font-serif mb-2 fs-2 text-dark">Privacy &amp; Data Protection</h1>
+        <p class="text-muted small mb-0">
+            Last updated: {{ last_updated|default:"October 2026" }}
+        </p>
+    </div>
+
+    <!-- Simple Card -->
+    <div class="card card-antique border-0 shadow-sm p-4 p-md-5 bg-white">
+        
+        <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.7;">
+            At <strong>Antique Hub</strong>, we respect your privacy and are committed to protecting your personal information. This policy briefly explains what data we collect and how we keep it safe.
+        </p>
+
+        <!-- 1. Information We Collect -->
+        <div class="policy-section">
+            <h2 class="fs-5 fw-bold text-dark mb-2">
+                <i class="bi bi-card-checklist text-warning me-1"></i> 1. Information We Collect
+            </h2>
+            <p class="text-muted small mb-2">
+                We only collect basic details required to manage your account, process acquisitions, and deliver items:
+            </p>
+            <ul class="text-muted small ps-3 mb-0">
+                <li><strong>Account Details:</strong> Your name, email, phone number, and delivery address.</li>
+                <li><strong>Order Records:</strong> History of your purchases, invoices, and delivery confirmations.</li>
+                <li><strong>Dealer Credentials:</strong> Official credentials submitted by antique dealers for verification.</li>
+            </ul>
+        </div>
+
+        <!-- 2. Data Protection -->
+        <div class="policy-section">
+            <h2 class="fs-5 fw-bold text-dark mb-2">
+                <i class="bi bi-shield-lock text-warning me-1"></i> 2. How We Protect Your Data
+            </h2>
+            <ul class="text-muted small ps-3 mb-0">
+                <li><strong>No Selling of Data:</strong> We never sell, rent, or trade your personal information to third parties.</li>
+                <li><strong>Secure Payments:</strong> Transactions are handled through encrypted payment gateways; card numbers are never stored on our servers.</li>
+                <li><strong>Encryption:</strong> All platform traffic is secured using 256-bit TLS encryption.</li>
+            </ul>
+        </div>
+
+        <!-- 3. Provenance & Compliance -->
+        <div class="policy-section">
+            <h2 class="fs-5 fw-bold text-dark mb-2">
+                <i class="bi bi-bank text-warning me-1"></i> 3. Provenance &amp; Compliance
+            </h2>
+            <p class="text-muted small mb-0">
+                All marketplace items comply with the <strong>Antiquities and Art Treasures Act, 1972</strong> for legal domestic ownership in India. Every acquired artifact includes an authenticity certificate and a 7-day inspection period upon delivery.
+            </p>
+        </div>
+
+        <!-- 4. Your Rights -->
+        <div class="policy-section">
+            <h2 class="fs-5 fw-bold text-dark mb-2">
+                <i class="bi bi-person-check text-warning me-1"></i> 4. Your Rights
+            </h2>
+            <p class="text-muted small mb-0">
+                You can review, update, or request the deletion of your account and personal details anytime through your profile or by contacting our team.
+            </p>
+        </div>
+
+        <!-- 5. Contact -->
+        <div class="policy-section border-0 pb-0 mb-0">
+            <h2 class="fs-5 fw-bold text-dark mb-2">
+                <i class="bi bi-envelope text-warning me-1"></i> 5. Contact Us
+            </h2>
+            <p class="text-muted small mb-3">
+                If you have any questions regarding your data or privacy, contact us anytime:
+            </p>
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
+                <div class="rounded-circle bg-white border border-secondary border-opacity-25 d-flex align-items-center justify-content-center text-warning" style="width: 42px; height: 42px; font-size: 1.25rem;">
+                    <i class="bi bi-envelope"></i>
+                </div>
+                <div class="small">
+                    <span class="text-muted d-block">Privacy &amp; Governance Desk:</span>
+                    <a href="mailto:governance@antiquehub.in" class="text-accent-gold text-decoration-none fw-semibold">governance@antiquehub.in</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

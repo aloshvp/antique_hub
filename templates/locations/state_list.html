@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}State Master — Admin Console | Antique Hub{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:admin_dashboard' %}">Admin Console</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Location Master</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+    <!-- Breadcrumb & Nav Pills -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <span class="badge bg-danger mb-2 px-3 py-1 text-uppercase fw-bold">
+                <i class="bi bi-pin-map-fill me-1"></i> Admin Location Console 
+            </span>
+            <h2 class="font-serif mb-1">State Master Directory</h2>
+            <p class="text-muted small mb-0">Manage geographical states and regional provenance for antique origins</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'locations:state_list' %}" class="btn btn-sm btn-antique-gold active">States</a>
+            <a href="{% url 'locations:district_list' %}" class="btn btn-sm btn-outline-secondary">Districts</a>
+            <a href="{% url 'locations:location_list' %}" class="btn btn-sm btn-outline-secondary">Locations</a>
+        </div>
+    </div>
+
+    <!-- Search & Action Bar -->
+    <div class="card card-antique mb-4 border-0">
+        <div class="card-body p-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-7">
+                    <form method="get" action="{% url 'locations:state_list' %}" class="d-flex gap-2">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" name="q" class="form-control border-start-0" placeholder="Search by state name..." value="{{ query|default:'' }}">
+                        </div>
+                        <button type="submit" class="btn btn-antique-dark px-3">Search</button>
+                        {% if query %}
+                            <a href="{% url 'locations:state_list' %}" class="btn btn-outline-secondary">Reset</a>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="col-md-5 text-md-end">
+                    <a href="{% url 'locations:state_add' %}" class="btn btn-antique-gold">
+                        <i class="bi bi-plus-circle me-1"></i> Add New State
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- States Table -->
+    <div class="card card-antique shadow-sm border-0">
+        <div class="card-body p-0">
+            {% if page_obj.object_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small text-uppercase">
+                            <tr>
+                                <th class="ps-4" style="width: 100px;">State ID</th>
+                                <th>State Name</th>
+                                <th>Districts Count</th>
+                                <th class="text-end pe-4" style="width: 180px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for state in page_obj %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">#{{ state.stateid }}</td>
+                                    <td>
+                                        <strong class="font-serif fs-6 text-dark">{{ state.state }}</strong>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'locations:district_list' %}?state_id={{ state.stateid }}" class="badge bg-light text-dark border text-decoration-none px-3 py-2">
+                                            <i class="bi bi-folder2-open me-1 text-warning"></i>
+                                            {{ state.districts_count }} District{{ state.districts_count|pluralize }}
+                                        </a>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'locations:state_edit' state.stateid %}" class="btn btn-outline-primary" title="Edit State">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
+                                            <a href="{% url 'locations:state_delete' state.stateid %}" class="btn btn-outline-danger" title="Delete State">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                {% if page_obj.has_other_pages %}
+                    <div class="d-flex justify-content-between align-items-center p-3 border-top small text-muted">
+                        <div>
+                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} states
+                        </div>
+                        <nav aria-label="States Pagination">
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                        <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+
+            {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-geo-alt display-4 text-muted opacity-50 mb-2"></i>
+                    <p class="mb-2">No states found matching your criteria.</p>
+                    <a href="{% url 'locations:state_add' %}" class="btn btn-sm btn-antique-gold">Add First State</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

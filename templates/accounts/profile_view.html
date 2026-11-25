@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile — Antique Hub{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Profile</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-antique shadow-lg border-0">
+                <!-- Header -->
+                <div class="card-antique-header d-flex justify-content-between align-items-center flex-wrap gap-2 py-4">
+                    <div>
+                        <h3 class="font-serif mb-1">{{ profile.contactname|default:user.username }}</h3>
+                        <p class="text-muted small mb-0">Member of Antique Hub since {{ profile.regdate|date:"F Y" }}</p>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="badge 
+                            {% if profile.role.role|lower == 'admin' or user.is_superuser %}badge-role-admin
+                            {% elif profile.role.role|lower == 'seller' %}badge-role-seller
+                            {% else %}badge-role-buyer{% endif %} fs-6 px-3 py-2">
+                            <i class="bi bi-person-badge me-1"></i> {{ profile.role.role|default:"User" }}
+                        </span>
+                        <span class="badge {% if profile.status == 'Active' %}bg-success{% else %}bg-warning text-dark{% endif %} fs-6 px-3 py-2">
+                            {{ profile.status|default:"Active" }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Profile Details Body -->
+                <div class="card-body p-4 p-md-5">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="text-muted small fw-bold text-uppercase">Username</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ user.username }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small fw-bold text-uppercase">Email Address</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ profile.email|default:user.email }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small fw-bold text-uppercase">Contact Phone</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ profile.phone|default:"Not Provided" }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small fw-bold text-uppercase">Registration Date</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ profile.regdate|date:"d M Y, h:i A" }}</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-muted small fw-bold text-uppercase">Street / Postal Address</label>
+                            <div class="fs-6 text-dark bg-light p-3 rounded border">
+                                {{ profile.address|default:"No physical address registered." }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-muted small fw-bold text-uppercase">State</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ profile.state.state|default:"—" }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-muted small fw-bold text-uppercase">District</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ profile.district.dist|default:"—" }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-muted small fw-bold text-uppercase">Location / Ward</label>
+                            <div class="fs-6 fw-semibold text-dark">{{ profile.location.locname|default:"—" }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top">
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'accounts:profile_edit' %}" class="btn btn-antique-gold" id="editProfileBtn">
+                                <i class="bi bi-pencil-square me-1"></i> Edit Profile Details
+                            </a>
+                            <a href="{% url 'accounts:change_password' %}" class="btn btn-antique-outline" id="changePasswordBtn">
+                                <i class="bi bi-shield-lock me-1"></i> Change Password
+                            </a>
+                        </div>
+                        {% if user.is_superuser or user.is_staff or profile.role.role|lower == 'admin' %}
+                            <a href="{% url 'accounts:admin_seller_list' %}" class="btn btn-outline-danger">
+                                <i class="bi bi-person-check-fill me-1"></i> Seller Approvals
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

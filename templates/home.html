@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Antique Hub &mdash; Curated Heritage Artifacts &amp; Online Antique Marketplace{% endblock %}
+
+{% block content %}
+<!-- Editorial Hero Section (Minimal & Pro) -->
+<section class="hero-antique text-center position-relative">
+    <div class="container py-lg-3">
+        <!-- Floating Curator Seal -->
+        <div class="mb-3 animate-fade-in">
+            <span class="badge-curator-minimal">
+                <i class="bi bi-shield-check"></i> Pan-India Heritage Marketplace
+            </span>
+        </div>
+
+        <!-- Editorial Headline -->
+        <h1 class="display-4 mb-3 fw-bold font-serif animate-fade-in">
+            Where History Finds <em>Its Next Custodian</em>
+        </h1>
+
+        <p class="lead mx-auto mb-4 animate-fade-in">
+            Discover authenticated royal numismatics, handcrafted Chola &amp; Pala bronzes, colonial rosewood treasures, and rare period curios curated from verified antiquarians across India.
+        </p>
+
+        <!-- Minimalist Hero Search Capsule -->
+        <form action="{% url 'catalog:item_list' %}" method="get" class="hero-search-box d-flex align-items-center mb-4 animate-fade-in">
+            <i class="bi bi-search text-accent-gold fs-5 me-3 flex-shrink-0"></i>
+            <input type="text" 
+                   name="q" 
+                   class="hero-search-input" 
+                   placeholder="Search imperial dynasties, sacred bronzes, rare numismatics, period curios..." 
+                   aria-label="Search antiques and rare curios"
+                   autocomplete="off">
+            <button type="submit" class="btn btn-hero-search text-nowrap rounded-pill ms-2" id="heroSearchSubmitBtn">
+                Explore <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+        </form>
+
+        <!-- Quick Discovery Chips -->
+        <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap mb-4 animate-fade-in small">
+            <span class="small text-uppercase letter-spacing-1 text-white-50 me-1">Historical Eras:</span>
+            <a href="{% url 'catalog:item_list' %}?q=Chola" class="chip-era">Chola Bronzes</a>
+            <a href="{% url 'catalog:item_list' %}?q=Mughal" class="chip-era">Mughal Weaponry</a>
+            <a href="{% url 'catalog:item_list' %}?q=Rosewood" class="chip-era">Colonial Rosewood</a>
+            <a href="{% url 'catalog:item_list' %}?q=Numismatics" class="chip-era">Dynastic Coins</a>
+            <a href="{% url 'inventory:discount_search' %}" class="chip-era chip-era-accent">🏷️ Curated Offers</a>
+        </div>
+
+        <!-- Minimal Primary CTAs -->
+        <div class="d-flex justify-content-center gap-3 flex-wrap animate-fade-in">
+            <a href="{% url 'catalog:item_list' %}" class="btn btn-antique-gold btn-lg px-4" id="heroExploreMarketplaceBtn">
+                <i class="bi bi-grid-3x3-gap me-2"></i> Browse Marketplace
+            </a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'accounts:buyer_register' %}" class="btn btn-antique-outline-light btn-lg px-4" id="heroRegisterBtn">
+                    Join as Collector
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:role_redirect' %}" class="btn btn-antique-outline-light btn-lg px-4">
+                    <i class="bi bi-compass me-2"></i> Role Dashboard
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Trust Statistics Metric Ribbon -->
+<section class="trust-metrics-ribbon border-top border-bottom">
+    <div class="container">
+        <div class="row g-3 text-center align-items-center">
+            <div class="col-6 col-md-3 border-end border-secondary border-opacity-25">
+                <div class="metric-number">350+</div>
+                <div class="metric-label">Verified Antiques</div>
+            </div>
+            <div class="col-6 col-md-3 border-end border-secondary border-opacity-25">
+                <div class="metric-number">18</div>
+                <div class="metric-label">Historical Eras</div>
+            </div>
+            <div class="col-6 col-md-3 border-end border-secondary border-opacity-25">
+                <div class="metric-number">100%</div>
+                <div class="metric-label">Provenance Audit</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="metric-number">₹0</div>
+                <div class="metric-label">Escrow Safety Fee</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Grid Section -->
+<section class="py-5 categories-showcase-section" id="categoriesSection">
+    <div class="container py-lg-3">
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-accent-gold small letter-spacing-2">Curated Classifications</span>
+                <h2 class="display-6 font-serif mb-0">Browse By Category</h2>
+            </div>
+            <a href="{% url 'catalog:item_list' %}" class="text-decoration-none fw-semibold text-accent-gold hover-gold">
+                View Entire Collection <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for cat in categories %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="card card-category-minimal h-100 p-4 transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="category-icon-minimal">
+                                {% if cat.category == 'Furniture' or 'Furniture' in cat.category %}
+                                    <i class="bi bi-lamp"></i>
+                                {% elif cat.category == 'Decor' %}
+                                    <i class="bi bi-brush"></i>
+                                {% elif 'Coin' in cat.category or 'Numismatics' in cat.category %}
+                                    <i class="bi bi-coin"></i>
+                                {% elif 'Jewel' in cat.category %}
+                                    <i class="bi bi-gem"></i>
+                                {% elif 'Weapon' in cat.category or 'Armour' in cat.category %}
+                                    <i class="bi bi-shield"></i>
+                                {% elif 'Bronze' in cat.category %}
+                                    <i class="bi bi-trophy"></i>
+                                {% elif 'Carpet' in cat.category or 'Textile' in cat.category %}
+                                    <i class="bi bi-palette"></i>
+                                {% else %}
+                                    <i class="bi bi-hourglass-split"></i>
+                                {% endif %}
+                            </div>
+                            <span class="badge-cat-count">
+                                {{ cat.item_count }} item{{ cat.item_count|pluralize }}
+                            </span>
+                        </div>
+                        <h4 class="font-serif mb-1 fs-5 fw-bold">{{ cat.category }}</h4>
+                        <p class="text-muted small mb-3 flex-grow-1">
+                            {{ cat.description|default:"Authentic historical artifacts & period collectibles curated from verified antiquarians."|truncatechars:85 }}
+                        </p>
+                        <div class="pt-2 mt-auto">
+                            <a href="{% url 'catalog:item_list' %}?category_id={{ cat.catid }}" class="link-category-explore">
+                                Explore Collection <i class="bi bi-chevron-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Royal Antiquities Masterpiece Showcase (Imperial Vault) -->
+{% if featured_items %}
+<section class="section-royal-vault position-relative" id="royalAntiquitiesSection">
+    <div class="container position-relative" style="z-index: 2;">
+        
+        <!-- Royal Vault Section Header -->
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-5 pb-2">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge-curator-minimal">
+                        <i class="bi bi-crown"></i> The Imperial Vault
+                    </span>
+                </div>
+                <h2 class="display-5 font-serif text-white mb-2">
+                    Featured <span class="text-gradient-gold">Royal Antiquities</span>
+                </h2>
+                <p class="text-white-50 mb-0 lead fs-6 pe-md-4" style="max-width: 640px;">
+                    Handpicked imperial relics, masterwork bronze deities, dynastic weaponry, and certified historical treasures.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'catalog:item_list' %}?sort=price_desc" class="btn btn-antique-outline-light rounded-pill px-4">
+                    Explore Relics <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Royal Vault Cards Grid -->
+        <div class="row g-4">
+            {% for item in featured_items %}
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-royal-vault h-100 d-flex flex-column">
+                        
+                        <!-- Photograph with Minimalist Badges & Overlays -->
+                        <div class="artifact-img-wrap position-relative text-center" style="height: 250px;">
+                            {% if item.img1 %}
+                                <a href="{% url 'catalog:item_detail' item.itemid %}">
+                                    <img src="{{ item.img1.url }}" alt="{{ item.title }}" class="w-100 h-100" style="object-fit: cover;">
+                                </a>
+                            {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50 bg-dark">
+                                    <i class="bi bi-image fs-1 opacity-25"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Ambient Image Bottom Vignette -->
+                            <div class="artifact-img-overlay"></div>
+
+                            <!-- Discount Badge -->
+                            {% if item.has_discount %}
+                                <span class="badge-royal-discount position-absolute top-0 start-0 m-2">
+                                    {{ item.discount_percent|floatformat:0 }}% OFF
+                                </span>
+                            {% endif %}
+
+                            <!-- Era Badge -->
+                            <span class="badge-royal-era position-absolute top-0 end-0 m-2">
+                                {{ item.years_old }} Yrs
+                            </span>
+
+                            <!-- Watchlist Heart Toggle (AJAX) -->
+                            <div class="position-absolute bottom-0 end-0 m-2" style="z-index: 3;">
+                                {% if user.is_authenticated %}
+                                    <button type="button" 
+                                            class="btn-royal-watchlist btn-ajax-watchlist"
+                                            data-item-id="{{ item.itemid }}"
+                                            data-url="{% url 'community:toggle_watchlist' item.itemid %}"
+                                            title="{% if item.itemid in user_watchlist_ids %}Remove from Watchlist{% else %}Save to Watchlist{% endif %}"
+                                            aria-label="Toggle Watchlist">
+                                        <i class="bi {% if item.itemid in user_watchlist_ids %}bi-heart-fill text-danger{% else %}bi-heart{% endif %}"></i>
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'accounts:login' %}" 
+                                       class="btn-royal-watchlist"
+                                       title="Sign in to save to Watchlist"
+                                       aria-label="Save to Watchlist">
+                                        <i class="bi bi-heart"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="card-body p-3 d-flex flex-column text-start">
+                            <span class="badge-royal-cat mb-1">
+                                {{ item.category.category }}
+                            </span>
+
+                            <h5 class="font-serif fs-6 fw-bold mb-1">
+                                <a href="{% url 'catalog:item_detail' item.itemid %}" class="text-white text-decoration-none hover-gold">
+                                    {{ item.title }}
+                                </a>
+                            </h5>
+
+                            <div class="small text-white-50 mb-3 d-flex align-items-center gap-1 text-truncate">
+                                <i class="bi bi-geo-alt text-accent-gold flex-shrink-0"></i>
+                                <span class="text-truncate">
+                                    {% if item.seller.userprofile.district %}
+                                        {{ item.seller.userprofile.district.dist }}, {{ item.seller.userprofile.state.state }}
+                                    {% else %}
+                                        {{ item.origin|default:"Royal Provenance" }}
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <!-- Pricing & Inspection CTA -->
+                            <div class="mt-auto pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if item.has_discount %}
+                                        <div class="small text-white-50 text-decoration-line-through me-1" style="font-size: 0.72rem;">₹{{ item.price }}</div>
+                                        <strong class="price-gold-display">₹{{ item.discounted_price }}</strong>
+                                    {% else %}
+                                        <strong class="price-gold-display">₹{{ item.price }}</strong>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'catalog:item_detail' item.itemid %}" class="btn btn-royal-inspect">
+                                    Inspect <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+<!-- Latest Catalog Arrivals Section -->
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-accent-gold small letter-spacing-2">Fresh From Antiquarians</span>
+                <h2 class="display-6 font-serif mb-0">Latest Heritage Arrivals</h2>
+            </div>
+            <a href="{% url 'catalog:item_list' %}" class="btn btn-antique-outline rounded-pill">
+                View Entire Marketplace <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        {% if latest_items %}
+            <div class="row g-4">
+                {% for item in latest_items %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card card-antique h-100 overflow-hidden">
+                            <div class="row g-0 h-100">
+                                <div class="col-4 position-relative artifact-img-wrap">
+                                    {% if item.img1 %}
+                                        <a href="{% url 'catalog:item_detail' item.itemid %}">
+                                            <img src="{{ item.img1.url }}" alt="{{ item.title }}" class="w-100 h-100" style="object-fit: cover; min-height: 140px;">
+                                        </a>
+                                    {% else %}
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                            <i class="bi bi-image fs-3 opacity-25"></i>
+                                        </div>
+                                    {% endif %}
+                                    {% if item.has_discount %}
+                                        <span class="badge-antique-discount position-absolute top-0 start-0 m-1 small" style="font-size: 0.65rem;">
+                                            {{ item.discount_percent|floatformat:0 }}% OFF
+                                        </span>
+                                    {% endif %}
+                                    <!-- Watchlist Heart Toggle (AJAX) -->
+                                    <div class="position-absolute bottom-0 start-0 m-1">
+                                        {% if user.is_authenticated %}
+                                            <button type="button" 
+                                                    class="btn btn-card-watchlist btn-ajax-watchlist shadow-sm"
+                                                    style="width: 28px; height: 28px;"
+                                                    data-item-id="{{ item.itemid }}"
+                                                    data-url="{% url 'community:toggle_watchlist' item.itemid %}"
+                                                    title="{% if item.itemid in user_watchlist_ids %}Remove from Watchlist{% else %}Save to Watchlist{% endif %}">
+                                                <i class="bi {% if item.itemid in user_watchlist_ids %}bi-heart-fill text-danger{% else %}bi-heart text-dark{% endif %}" style="font-size: 0.75rem;"></i>
+                                            </button>
+                                        {% else %}
+                                            <a href="{% url 'accounts:login' %}" 
+                                               class="btn btn-card-watchlist shadow-sm"
+                                               style="width: 28px; height: 28px;"
+                                               title="Sign in to save to Watchlist">
+                                                <i class="bi bi-heart text-dark" style="font-size: 0.75rem;"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body p-3 d-flex flex-column h-100">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="badge-antique-seal" style="font-size: 0.7rem;">
+                                                {{ item.category.category }}
+                                            </span>
+                                            <small class="text-muted" style="font-size: 0.75rem;">{{ item.years_old }} Yrs</small>
+                                        </div>
+                                        <h6 class="font-serif fw-bold text-dark mb-1 text-truncate">
+                                            <a href="{% url 'catalog:item_detail' item.itemid %}" class="text-dark text-decoration-none hover-gold">
+                                                {{ item.title }}
+                                            </a>
+                                        </h6>
+                                        <small class="text-muted small text-truncate mb-2">
+                                            <i class="bi bi-geo-alt text-accent-gold"></i>
+                                            {% if item.seller.userprofile.location %}
+                                                {{ item.seller.userprofile.location.locname }}, {{ item.seller.userprofile.district.dist }}
+                                            {% else %}
+                                                Verified Dealer
+                                            {% endif %}
+                                        </small>
+
+                                        <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                            <div>
+                                                {% if item.has_discount %}
+                                                    <span class="text-muted small text-decoration-line-through me-1" style="font-size: 0.75rem;">₹{{ item.price }}</span>
+                                                    <strong class="price-gold fw-bold">₹{{ item.discounted_price }}</strong>
+                                                {% else %}
+                                                    <strong class="price-gold fw-bold">₹{{ item.price }}</strong>
+                                                {% endif %}
+                                            </div>
+                                            <a href="{% url 'catalog:item_detail' item.itemid %}" class="btn btn-sm btn-antique-outline py-0 px-2 rounded-pill" style="font-size: 0.75rem;">
+                                                Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-box-seam display-4 opacity-50 mb-2"></i>
+                <p>New artifacts are currently being cataloged by verified dealers.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Trust & Marketplace Guarantees Band -->
+<section class="trust-band-antique">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="trust-pillar-card">
+                    <div class="trust-icon-wrap">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <h5 class="font-serif mb-1 text-white fs-6">Museum-Grade Authenticity</h5>
+                    <p class="small text-white-50 mb-0">Dealers audited and verified by certified heritage curators before cataloging.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="trust-pillar-card">
+                    <div class="trust-icon-wrap">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <h5 class="font-serif mb-1 text-white fs-6">Escrow Buyer Protection</h5>
+                    <p class="small text-white-50 mb-0">Your funds remain safely escrowed until tracked white-glove arrival inspection.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="trust-pillar-card">
+                    <div class="trust-icon-wrap">
+                        <i class="bi bi-percent"></i>
+                    </div>
+                    <h5 class="font-serif mb-1 text-white fs-6">Curated Seasonal Offers</h5>
+                    <p class="small text-white-50 mb-0">Exclusive category promotions and live discount calculations directly from sellers.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="trust-pillar-card">
+                    <div class="trust-icon-wrap">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <h5 class="font-serif mb-1 text-white fs-6">Geographical Provenance</h5>
+                    <p class="small text-white-50 mb-0">Complete historical provenance mapped across 28 Indian states &amp; regional guilds.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

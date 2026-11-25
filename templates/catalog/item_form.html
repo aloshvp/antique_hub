@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ action_title }} — Antique Hub{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            {% if user.is_staff or user.is_superuser %}
+                <li class="breadcrumb-item"><a href="{% url 'catalog:admin_items' %}">Manage Items</a></li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{% url 'catalog:seller_items' %}">My Listings</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ action_title }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-md-11">
+            <div class="card card-antique shadow-lg border-0">
+                <!-- Header -->
+                <div class="card-antique-header text-center py-4">
+                    <span class="badge bg-warning text-dark mb-2 px-3 py-1 text-uppercase fw-bold">
+                        <i class="bi bi-gem me-1"></i> Antique Artifact Specifications &amp; Inventory
+                    </span>
+                    <h3 class="font-serif mb-1">{{ action_title }}</h3>
+                    <p class="text-muted small mb-0">Provide verifiable historical provenance, dual photographs, and initial stock balance</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small mb-4">
+                            {% for error in form.non_field_errors %}
+                                <div><i class="bi bi-exclamation-octagon-fill me-1"></i> {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" novalidate id="itemForm">
+                        {% csrf_token %}
+
+                        <!-- Section 1: Identification & Classification -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-tag-fill text-warning me-1"></i> 1. Identification & Classification
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">Item Code / SKU *</label>
+                                {{ form.item }}
+                                {% if form.item.errors %}
+                                    <div class="text-danger small mt-1">{{ form.item.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold small">Antique Title *</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger small mt-1">{{ form.title.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Category *</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">SubCategory (Dependent) *</label>
+                                {{ form.subcategory }}
+                                {% if form.subcategory.errors %}
+                                    <div class="text-danger small mt-1">{{ form.subcategory.errors|first }}</div>
+                                {% endif %}
+                                <div class="form-text small text-muted">Select a category above to load related subcategories.</div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Historical Provenance & Era -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-hourglass-split text-warning me-1"></i> 2. Historical Provenance & Age
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">Age (Years Old) *</label>
+                                {{ form.years_old }}
+                                {% if form.years_old.errors %}
+                                    <div class="text-danger small mt-1">{{ form.years_old.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold small">Origin / Cultural Era *</label>
+                                {{ form.origin }}
+                                {% if form.origin.errors %}
+                                    <div class="text-danger small mt-1">{{ form.origin.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small">Detailed Description & Condition *</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">{{ form.description.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Dual Photographs -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-images text-warning me-1"></i> 3. Artifact Photographs (Max 5MB each &bull; JPG, PNG, WEBP)
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Primary Antique Photograph *</label>
+                                {{ form.img1 }}
+                                {% if form.img1.errors %}
+                                    <div class="text-danger small mt-1">{{ form.img1.errors|first }}</div>
+                                {% endif %}
+                                {% if item_obj.img1 %}
+                                    <div class="mt-2 small text-muted">
+                                        Current: <a href="{{ item_obj.img1.url }}" target="_blank">{{ item_obj.img1.name }}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Secondary / Hallmark Photo (Optional)</label>
+                                {{ form.img2 }}
+                                {% if form.img2.errors %}
+                                    <div class="text-danger small mt-1">{{ form.img2.errors|first }}</div>
+                                {% endif %}
+                                {% if item_obj.img2 %}
+                                    <div class="mt-2 small text-muted">
+                                        Current: <a href="{{ item_obj.img2.url }}" target="_blank">{{ item_obj.img2.name }}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Pricing & Inventory Ledger -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-cash-stack text-warning me-1"></i> 4. Valuation &amp; Inventory Allocation
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">Price (INR) *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">₹</span>
+                                    {{ form.price }}
+                                </div>
+                                {% if form.price.errors %}
+                                    <div class="text-danger small mt-1">{{ form.price.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                {% if is_create %}
+                                    <label class="form-label fw-semibold small">Opening Stock Units *</label>
+                                    {{ form.opening_stock }}
+                                    {% if form.opening_stock.errors %}
+                                        <div class="text-danger small mt-1">{{ form.opening_stock.errors|first }}</div>
+                                    {% endif %}
+                                {% else %}
+                                    <label class="form-label fw-semibold small">Current Available Stock *</label>
+                                    {{ form.current_stock }}
+                                    {% if form.current_stock.errors %}
+                                        <div class="text-danger small mt-1">{{ form.current_stock.errors|first }}</div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">Listing Status *</label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="text-danger small mt-1">{{ form.status.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            {% if user.is_staff or user.is_superuser %}
+                                <a href="{% url 'catalog:admin_items' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Cancel
+                                </a>
+                            {% else %}
+                                <a href="{% url 'catalog:seller_items' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Cancel
+                                </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-antique-gold px-4" id="saveItemBtn">
+                                <i class="bi bi-cloud-arrow-up-fill me-1"></i> {% if is_create %}Publish Antique Listing{% else %}Update Listing{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const categorySelect = document.getElementById('id_category');
+    const subcategorySelect = document.getElementById('id_subcategory');
+
+    if (categorySelect && subcategorySelect) {
+        categorySelect.addEventListener('change', function () {
+            const catId = this.value;
+            subcategorySelect.innerHTML = '<option value="">-- Loading SubCategories... --</option>';
+
+            if (!catId) {
+                subcategorySelect.innerHTML = '<option value="">-- Select SubCategory --</option>';
+                return;
+            }
+
+            fetch(`/catalog/ajax/load-subcategories/?category_id=${encodeURIComponent(catId)}`)
+                .then(res => res.json())
+                .then(data => {
+                    subcategorySelect.innerHTML = '<option value="">-- Select SubCategory --</option>';
+                    if (data.subcategories && data.subcategories.length > 0) {
+                        data.subcategories.forEach(s => {
+                            const opt = document.createElement('option');
+                            opt.value = s.subcatid;
+                            opt.textContent = s.subcategory;
+                            subcategorySelect.appendChild(opt);
+                        });
+                    } else {
+                        subcategorySelect.innerHTML = '<option value="">-- No SubCategories Found --</option>';
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading subcategories:', err);
+                    subcategorySelect.innerHTML = '<option value="">-- Error Loading SubCategories --</option>';
+                });
+        });
+    }
+});
+</script>
+{% endblock %}

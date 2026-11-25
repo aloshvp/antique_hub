@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ action_title }} — Admin | Antique Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card card-antique shadow-lg border-0">
+                <div class="card-antique-header text-center py-4">
+                    <span class="badge bg-danger mb-2 px-3 py-1 text-uppercase fw-bold">
+                        <i class="bi bi-tags-fill me-1"></i> Category Master
+                    </span>
+                    <h3 class="font-serif mb-1">{{ action_title }}</h3>
+                    <p class="text-muted small mb-0">Define broad classification for antique acquisitions</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small mb-4">
+                            {% for error in form.non_field_errors %}
+                                <div><i class="bi bi-exclamation-octagon-fill me-1"></i> {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate id="categoryForm">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Category Name *</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-1">{{ form.category.errors|first }}</div>
+                            {% endif %}
+                            <div class="form-text small text-muted">Example: Furniture, Decor, Coins, Jewellery, Artefacts, Collectibles.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small">Description (Optional)</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">{{ form.description.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a href="{% url 'catalog:category_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-antique-gold px-4" id="saveCategoryBtn">
+                                <i class="bi bi-check2-circle me-1"></i> Save Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

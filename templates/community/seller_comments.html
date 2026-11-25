@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Customer Reviews &amp; Comments | Seller Hub | Antique Hub{% endblock %}
+{% block meta_description %}Inspect customer feedback, provenance inquiries, and collector ratings on your antique listings on Antique Hub.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalog:seller_items' %}">Seller Hub</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Customer Reviews &amp; Comments</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+
+    <!-- Header Banner -->
+    <div class="card card-antique p-4 mb-4 border-secondary border-opacity-25 shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-2 mb-2">
+                    <i class="bi bi-chat-heart-fill me-1"></i> SELLER FEEDBACK DESK
+                </span>
+                <h2 class="brand-font text-white mb-1">Customer Reviews &amp; Inquiries</h2>
+                <p class="text-white-50 small mb-0">
+                    Monitor collector feedback, star ratings, and historical discussions across all your curated antique relics.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'catalog:seller_items' %}" class="btn btn-antique-dark">
+                    <i class="bi bi-box-seam me-1"></i> My Antique Listings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card card-antique border-warning border-opacity-50 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">Average Rating</div>
+                        <div class="fs-4 fw-bold text-warning font-monospace">
+                            {% if avg_rating > 0 %}{{ avg_rating }} / 5.0{% else %}No ratings{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-antique border-secondary border-opacity-25 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle fs-3">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">Total Comments &amp; Reviews</div>
+                        <div class="fs-4 fw-bold text-white font-monospace">{{ total_comments }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-antique border-success border-opacity-25 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle fs-3">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">5-Star Exceptional Reviews</div>
+                        <div class="fs-4 fw-bold text-success font-monospace">{{ five_star_count }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Console -->
+    <div class="card card-antique border-secondary border-opacity-25 p-4 mb-4 shadow-sm">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label text-white-50 small">Filter by Relic / Listing:</label>
+                <select name="item_id" class="form-select form-select-antique">
+                    <option value="">All My Antique Listings</option>
+                    {% for item in seller_items %}
+                        <option value="{{ item.itemid }}" {% if selected_item_id == item.itemid|stringformat:"s" %}selected{% endif %}>
+                            {{ item.title|truncatechars:45 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-white-50 small">Star Rating:</label>
+                <select name="rating" class="form-select form-select-antique">
+                    <option value="">All Ratings</option>
+                    <option value="5" {% if selected_rating == '5' %}selected{% endif %}>★★★★★ 5 Stars Only</option>
+                    <option value="4" {% if selected_rating == '4' %}selected{% endif %}>★★★★☆ 4 Stars Only</option>
+                    <option value="3" {% if selected_rating == '3' %}selected{% endif %}>★★★☆☆ 3 Stars Only</option>
+                    <option value="2" {% if selected_rating == '2' %}selected{% endif %}>★★☆☆☆ 2 Stars Only</option>
+                    <option value="1" {% if selected_rating == '1' %}selected{% endif %}>★☆☆☆☆ 1 Star Only</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-white-50 small">Keyword Search:</label>
+                <input type="text" name="search" class="form-control form-control-antique"
+                       placeholder="Buyer username or words..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-antique-gold flex-grow-1">
+                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                </button>
+                <a href="{% url 'community:seller_comments' %}" class="btn btn-outline-secondary" title="Reset Filters">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Comments List -->
+    <div class="card card-antique border-secondary border-opacity-25 shadow-sm overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead class="border-secondary border-opacity-50 text-warning font-serif small">
+                    <tr>
+                        <th class="ps-4" style="width: 25%;">Artifact</th>
+                        <th style="width: 20%;">Collector</th>
+                        <th style="width: 15%;">Rating</th>
+                        <th style="width: 30%;">Commentary &amp; Observation</th>
+                        <th class="text-end pe-4" style="width: 10%;">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="border-secondary border-opacity-25">
+                    {% for comment in page_obj %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-2">
+                                {% if comment.item.img1 %}
+                                    <img src="{{ comment.item.img1.url }}" alt="{{ comment.item.title }}" class="rounded" style="width: 44px; height: 44px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-dark rounded text-center text-muted" style="width: 44px; height: 44px; line-height: 44px;">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="min-width-0">
+                                    <a href="{% url 'catalog:item_detail' comment.item.itemid %}" class="text-white text-decoration-none fw-bold small text-truncate d-block hover-warning">
+                                        {{ comment.item.title }}
+                                    </a>
+                                    <small class="text-white-50 font-monospace">₹{{ comment.item.price|floatformat:2 }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-white small">
+                                {{ comment.buyer.username }}
+                                {% if comment.buyer.userprofile.contactname %}
+                                    <span class="text-white-50">({{ comment.buyer.userprofile.contactname }})</span>
+                                {% endif %}
+                            </div>
+                            {% if comment.is_verified_buyer %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle mt-1" style="font-size: 0.68rem;">
+                                    <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-muted mt-1" style="font-size: 0.68rem;">
+                                    Community Inquiry
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if comment.rating %}
+                                <div class="text-warning small">
+                                    {% for s in comment.star_range %}<i class="bi bi-star-fill"></i>{% endfor %}
+                                    {% for s in comment.empty_star_range %}<i class="bi bi-star text-muted"></i>{% endfor %}
+                                </div>
+                                <small class="text-white-50 font-monospace">{{ comment.rating }} of 5 Stars</small>
+                            {% else %}
+                                <span class="text-muted small">&mdash; No Rating</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="small text-white text-break">
+                                {{ comment.comments|truncatechars:200 }}
+                            </div>
+                        </td>
+                        <td class="text-end pe-4 small text-white-50">
+                            {{ comment.cdate|date:"d M Y" }}<br>
+                            <span class="text-muted" style="font-size: 0.72rem;">{{ comment.cdate|time:"H:i" }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-white-50">
+                            <i class="bi bi-chat-square-dots fs-1 text-muted d-block mb-3"></i>
+                            <h5 class="text-white font-serif">No reviews or commentary found</h5>
+                            <p class="small text-white-50 mb-0">Try clearing filters or search keywords above.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Seller reviews pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link bg-dark border-secondary text-warning" href="?page={{ page_obj.previous_page_number }}{% if selected_item_id %}&item_id={{ selected_item_id }}{% endif %}{% if selected_rating %}&rating={{ selected_rating }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        &laquo; Previous
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link {% if page_obj.number == num %}bg-warning border-warning text-dark font-monospace fw-bold{% else %}bg-dark border-secondary text-white-50{% endif %}"
+                       href="?page={{ num }}{% if selected_item_id %}&item_id={{ selected_item_id }}{% endif %}{% if selected_rating %}&rating={{ selected_rating }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link bg-dark border-secondary text-warning" href="?page={{ page_obj.next_page_number }}{% if selected_item_id %}&item_id={{ selected_item_id }}{% endif %}{% if selected_rating %}&rating={{ selected_rating }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        Next &raquo;
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

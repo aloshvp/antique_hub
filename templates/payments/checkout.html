@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout Payment | Order #{{ order.purchaseid }} | Antique Hub{% endblock %}
+{% block meta_description %}Secure sandbox payment checkout for Order #{{ order.purchaseid }} on Antique Hub. Choose Credit/Debit Card or Cash on Delivery.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-method-card {
+        cursor: pointer;
+        transition: all 0.25s ease;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        background-color: #1e1e1e;
+    }
+    .payment-method-card:hover {
+        border-color: rgba(212, 175, 55, 0.5);
+        transform: translateY(-2px);
+    }
+    .payment-method-card.active {
+        border-color: #d4af37;
+        background-color: #24221b;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    .card-preview-box {
+        background: linear-gradient(135deg, #1c1a17 0%, #2b271d 50%, #151412 100%);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        border-radius: 12px;
+        padding: 22px;
+        color: #fff;
+        position: relative;
+        min-height: 200px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .card-chip {
+        width: 44px;
+        height: 32px;
+        background: linear-gradient(135deg, #e6c875 0%, #b38728 100%);
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+    }
+    .card-num-preview {
+        letter-spacing: 3px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.25rem;
+        margin-bottom: 20px;
+    }
+    .test-card-pill {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .test-card-pill:hover {
+        background-color: #d4af37 !important;
+        color: #111 !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:buyer_orders' %}">My Orders</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:order_detail' order.purchaseid %}">Order #{{ order.purchaseid }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Payment Gateway</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+
+    <!-- Header Banner -->
+    <div class="card card-antique p-4 mb-4 border-secondary border-opacity-25 shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-2 mb-2">
+                    <i class="bi bi-shield-check me-1"></i> SECURE GATEWAY CHECKOUT
+                </span>
+                <h2 class="brand-font text-white mb-1">Antique Hub Payment Authorization</h2>
+                <p class="text-white-50 small mb-0">
+                    Order Reference: <strong class="text-warning font-monospace">#{{ order.purchaseid }}</strong> &bull;
+                    Buyer: <span class="text-white">{{ order.buyer.username }}</span>
+                </p>
+            </div>
+            <div class="text-md-end">
+                <div class="text-white-50 small">Total Payable Amount</div>
+                <div class="fs-2 fw-bold text-warning font-monospace">₹{{ order.tot_amt|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Payment Options & Form (Left 8 Cols) -->
+        <div class="col-lg-8">
+            <!-- Payment Method Selector Tabs -->
+            <div class="card card-antique border-secondary border-opacity-25 p-4 mb-4 shadow-sm">
+                <h5 class="brand-font text-warning mb-3">
+                    <i class="bi bi-wallet2 me-2"></i> Select Payment Method
+                </h5>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded payment-method-card {% if selected_payment_type == 'card' %}active{% endif %}" id="cardMethodCard" onclick="selectPaymentType('card')">
+                            <div class="d-flex align-items-center">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="radio" name="method_radio" id="radioCard" {% if selected_payment_type == 'card' %}checked{% endif %}>
+                                </div>
+                                <div>
+                                    <h6 class="text-white mb-1"><i class="bi bi-credit-card-2-front text-warning me-2"></i> Credit / Debit Card</h6>
+                                    <small class="text-white-50">Visa, MasterCard, RuPay with Luhn verification</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded payment-method-card {% if selected_payment_type == 'cod' %}active{% endif %}" id="codMethodCard" onclick="selectPaymentType('cod')">
+                            <div class="d-flex align-items-center">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="radio" name="method_radio" id="radioCod" {% if selected_payment_type == 'cod' %}checked{% endif %}>
+                                </div>
+                                <div>
+                                    <h6 class="text-white mb-1"><i class="bi bi-cash-stack text-success me-2"></i> Cash on Delivery (COD)</h6>
+                                    <small class="text-white-50">Pay upon delivery by courier</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <form method="post" action="{% url 'payments:checkout_payment' order.purchaseid %}" id="paymentForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="payment_type" id="paymentTypeInput" value="{{ selected_payment_type }}">
+
+                    <!-- Card Section -->
+                    <div id="cardSection" style="{% if selected_payment_type == 'cod' %}display: none;{% endif %}">
+                        <!-- Virtual Card Preview Box -->
+                        <div class="card-preview-box mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-dark bg-opacity-75 text-warning font-monospace small px-2 py-1">
+                                    <i class="bi bi-lock-fill me-1"></i> SIMULATED GATEWAY
+                                </span>
+                                <span class="fw-bold font-monospace text-warning fs-5" id="cardBrandPreview">CARD</span>
+                            </div>
+                            <div class="card-chip"></div>
+                            <div class="card-num-preview" id="cardNumberPreview">•••• •••• •••• ••••</div>
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div>
+                                    <small class="text-white-50 text-uppercase d-block" style="font-size: 0.7rem;">Card Holder</small>
+                                    <span class="font-monospace text-white text-uppercase" id="cardHolderPreview">
+                                        {{ order.buyer.userprofile.contactname|default:order.buyer.username }}
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-white-50 text-uppercase d-block" style="font-size: 0.7rem;">Expires</small>
+                                    <span class="font-monospace text-white" id="cardExpiryPreview">MM/YY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Inputs -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="card_holder" class="form-label text-white-50 small">Cardholder Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-antique" id="card_holder" name="card_holder"
+                                       value="{{ form_data.card_holder|default:order.buyer.userprofile.contactname|default:order.buyer.username }}"
+                                       placeholder="e.g. Ramesh Chandra Verma" required oninput="updatePreview()">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="card_method" class="form-label text-white-50 small">Card Instrument <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-antique" id="card_method" name="card_method">
+                                    <option value="Credit Card" {% if form_data.card_method == 'Credit Card' %}selected{% endif %}>Credit Card</option>
+                                    <option value="Debit Card" {% if form_data.card_method == 'Debit Card' %}selected{% endif %}>Debit Card</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="card_number" class="form-label text-white-50 small">Card Number (Validated via Luhn Algorithm) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary border-opacity-50 text-warning" id="cardIcon">
+                                        <i class="bi bi-credit-card"></i>
+                                    </span>
+                                    <input type="text" class="form-control form-control-antique font-monospace" id="card_number" name="card_number"
+                                           value="{{ form_data.card_number|default:'' }}"
+                                           placeholder="4111 1111 1111 1111" maxlength="23" required oninput="formatAndValidateCard(this)">
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-white-50" id="luhnFeedback">Must be a valid 13-19 digit number satisfying Luhn check.</small>
+                                    <small class="text-warning font-monospace" id="detectedBrand">Visa / RuPay / MC</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="exp_month" class="form-label text-white-50 small">Expiry Month <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-antique font-monospace" id="exp_month" name="exp_month" required onchange="updatePreview()">
+                                    <option value="">MM</option>
+                                    <option value="01">01 - Jan</option>
+                                    <option value="02">02 - Feb</option>
+                                    <option value="03">03 - Mar</option>
+                                    <option value="04">04 - Apr</option>
+                                    <option value="05">05 - May</option>
+                                    <option value="06">06 - Jun</option>
+                                    <option value="07">07 - Jul</option>
+                                    <option value="08">08 - Aug</option>
+                                    <option value="09">09 - Sep</option>
+                                    <option value="10">10 - Oct</option>
+                                    <option value="11">11 - Nov</option>
+                                    <option value="12">12 - Dec</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="exp_year" class="form-label text-white-50 small">Expiry Year <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-antique font-monospace" id="exp_year" name="exp_year" required onchange="updatePreview()">
+                                    <option value="">YYYY</option>
+                                    {% for yr in year_range %}
+                                        <option value="{{ yr }}" {% if forloop.counter == 3 %}selected{% endif %}>{{ yr }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="cvv" class="form-label text-white-50 small">
+                                    CVV / CVC <span class="text-danger">*</span>
+                                    <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" title="3 digits on back of card (4 digits for Amex). Never stored!"></i>
+                                </label>
+                                <input type="password" class="form-control form-control-antique font-monospace" id="cvv" name="cvv"
+                                       placeholder="123" maxlength="4" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="bank_name" class="form-label text-white-50 small">Issuing Bank <span class="text-white-50">(Optional / Auto-detected)</span></label>
+                                <select class="form-select form-select-antique" id="bank_name" name="bank_name">
+                                    <option value="">-- Choose or Auto-Detect Issuing Bank --</option>
+                                    {% for bank in banks %}
+                                        <option value="{{ bank }}">{{ bank }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- PCI-DSS Compliance Badge Notice -->
+                        <div class="alert alert-dark border-secondary border-opacity-50 mt-4 d-flex align-items-center p-3">
+                            <i class="bi bi-shield-lock-fill text-warning fs-3 me-3"></i>
+                            <div class="small">
+                                <strong class="text-warning">PCI-DSS Security Compliance:</strong>
+                                Antique Hub operates with strict privacy standards. We <strong>NEVER</strong> store your complete card number or CVV in our database. Only the last 4 digits, card network, issuing bank, amount, and timestamp are securely stored for transaction reconciliation.
+                            </div>
+                        </div>
+
+                        <!-- One-Click Demo Test Cards Helper Box -->
+                        <div class="card bg-dark bg-opacity-75 border-warning border-opacity-25 p-3 mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small fw-bold text-warning font-serif">
+                                    <i class="bi bi-lightning-charge-fill me-1"></i> Sandbox Test Cards (Click to Auto-Fill):
+                                </span>
+                                <span class="badge bg-secondary small">Demo Helper</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-dark border border-secondary p-2 test-card-pill"
+                                      onclick="fillTestCard('4111111111111111', '12', '2028', '123', 'Visa', 'State Bank of India')">
+                                    <i class="bi bi-credit-card me-1 text-primary"></i> Visa: 4111...1111
+                                </span>
+                                <span class="badge bg-dark border border-secondary p-2 test-card-pill"
+                                      onclick="fillTestCard('5555555555554444', '08', '2029', '456', 'MasterCard', 'HDFC Bank')">
+                                    <i class="bi bi-credit-card me-1 text-danger"></i> MasterCard: 5555...4444
+                                </span>
+                                <span class="badge bg-dark border border-secondary p-2 test-card-pill"
+                                      onclick="fillTestCard('6080123456789015', '05', '2027', '789', 'RuPay', 'Punjab National Bank')">
+                                    <i class="bi bi-credit-card me-1 text-success"></i> RuPay: 6080...9015
+                                </span>
+                                <span class="badge bg-dark border border-secondary p-2 test-card-pill"
+                                      onclick="fillTestCard('378282246310005', '11', '2028', '8492', 'American Express', 'ICICI Bank')">
+                                    <i class="bi bi-credit-card me-1 text-info"></i> Amex: 3782...005
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cash on Delivery Section -->
+                    <div id="codSection" style="{% if selected_payment_type != 'cod' %}display: none;{% endif %}">
+                        <div class="alert alert-success bg-dark bg-opacity-75 border-success border-opacity-50 p-4 mb-4">
+                            <h5 class="text-success mb-2 font-serif">
+                                <i class="bi bi-truck me-2"></i> Cash on Delivery Selected
+                            </h5>
+                            <p class="text-white-50 small mb-3">
+                                You can pay in cash or via mobile UPI at the doorstep when our insured Heritage Courier delivers your antique relics.
+                            </p>
+                            <div class="card bg-black bg-opacity-50 border-secondary border-opacity-25 p-3">
+                                <h6 class="text-warning small text-uppercase fw-bold mb-2">Delivery Destination:</h6>
+                                <p class="text-white small mb-1">
+                                    <strong>{{ order.buyer.username }}</strong>
+                                    {% if order.buyer.userprofile.contactname %} ({{ order.buyer.userprofile.contactname }}){% endif %}
+                                </p>
+                                <p class="text-white-50 small mb-0">
+                                    {{ order.buyer.userprofile.address|default:"Collector Address on Record" }},
+                                    {% if order.buyer.userprofile.district %}{{ order.buyer.userprofile.district.dist }}, {% endif %}
+                                    {% if order.buyer.userprofile.state %}{{ order.buyer.userprofile.state.state }}{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                        <button type="submit" class="btn btn-antique-gold w-100 py-3 fs-5 shadow-lg fw-bold" id="submitPaymentBtn">
+                            <i class="bi bi-check-circle-fill me-2"></i> Authorize &amp; Pay ₹{{ order.tot_amt|floatformat:2 }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary & Artifacts Breakdown (Right 4 Cols) -->
+        <div class="col-lg-4">
+            <div class="card card-antique border-secondary border-opacity-25 p-4 mb-4 shadow-sm">
+                <h5 class="brand-font text-warning mb-3">
+                    <i class="bi bi-receipt me-2"></i> Order Summary
+                </h5>
+
+                <div class="mb-3">
+                    {% for p in order_items %}
+                        <div class="d-flex align-items-center gap-3 py-2 border-bottom border-secondary border-opacity-25">
+                            {% if p.item.image1 %}
+                                <img src="{{ p.item.image1.url }}" alt="{{ p.item.title }}" class="rounded" style="width: 48px; height: 48px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-dark rounded text-center text-muted" style="width: 48px; height: 48px; line-height: 48px;">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1 min-width-0">
+                                <h6 class="text-white small text-truncate mb-0">{{ p.item.title }}</h6>
+                                <small class="text-white-50">{{ p.quantity }} &times; ₹{{ p.item.discounted_price|floatformat:2 }}</small>
+                            </div>
+                            <div class="font-monospace text-warning small fw-bold">
+                                ₹{{ p.item.discounted_price|floatformat:2 }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex justify-content-between text-white-50 small mb-2">
+                    <span>Artifacts Net:</span>
+                    <span class="text-white font-monospace">₹{{ order.tot_amt|add:order.ship_charge|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-white-50 small mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+                    <span>Insured Heritage Shipping:</span>
+                    {% if order.ship_charge == 0 %}
+                        <span class="text-success font-monospace fw-bold">FREE</span>
+                    {% else %}
+                        <span class="text-white font-monospace">₹{{ order.ship_charge|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline mb-3">
+                    <span class="brand-font text-white fs-5">Payable Total:</span>
+                    <span class="fs-3 fw-bold text-warning font-monospace">₹{{ order.tot_amt|floatformat:2 }}</span>
+                </div>
+
+                <div class="bg-dark bg-opacity-50 p-3 rounded text-center small text-white-50 border border-secondary border-opacity-25">
+                    <i class="bi bi-shield-check text-warning me-1"></i> Replaceable Service Architecture<br>
+                    <span class="text-muted" style="font-size: 0.75rem;">Pluggable support for Razorpay &amp; Stripe test modes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle Payment Method Card vs COD
+    function selectPaymentType(type) {
+        document.getElementById('paymentTypeInput').value = type;
+        const cardSection = document.getElementById('cardSection');
+        const codSection = document.getElementById('codSection');
+        const cardMethodCard = document.getElementById('cardMethodCard');
+        const codMethodCard = document.getElementById('codMethodCard');
+        const radioCard = document.getElementById('radioCard');
+        const radioCod = document.getElementById('radioCod');
+        const submitBtn = document.getElementById('submitPaymentBtn');
+
+        if (type === 'card') {
+            cardSection.style.display = 'block';
+            codSection.style.display = 'none';
+            cardMethodCard.classList.add('active');
+            codMethodCard.classList.remove('active');
+            radioCard.checked = true;
+            radioCod.checked = false;
+            submitBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Authorize &amp; Pay ₹{{ order.tot_amt|floatformat:2 }}';
+            document.getElementById('card_holder').required = true;
+            document.getElementById('card_number').required = true;
+            document.getElementById('exp_month').required = true;
+            document.getElementById('exp_year').required = true;
+            document.getElementById('cvv').required = true;
+        } else {
+            cardSection.style.display = 'none';
+            codSection.style.display = 'block';
+            codMethodCard.classList.add('active');
+            cardMethodCard.classList.remove('active');
+            radioCod.checked = true;
+            radioCard.checked = false;
+            submitBtn.innerHTML = '<i class="bi bi-truck me-2"></i> Confirm Cash on Delivery (₹{{ order.tot_amt|floatformat:2 }})';
+            document.getElementById('card_holder').required = false;
+            document.getElementById('card_number').required = false;
+            document.getElementById('exp_month').required = false;
+            document.getElementById('exp_year').required = false;
+            document.getElementById('cvv').required = false;
+        }
+    }
+
+    // Luhn Algorithm Client-Side Checker
+    function checkLuhn(cardNum) {
+        const cleaned = cardNum.replace(/[\s-]/g, '');
+        if (!/^\d{13,19}$/.test(cleaned)) return false;
+        let sum = 0;
+        let doubleUp = false;
+        for (let i = cleaned.length - 1; i >= 0; i--) {
+            let digit = parseInt(cleaned.charAt(i), 10);
+            if (doubleUp) {
+                digit *= 2;
+                if (digit > 9) digit -= 9;
+            }
+            sum += digit;
+            doubleUp = !doubleUp;
+        }
+        return (sum % 10 === 0);
+    }
+
+    // Detect card type from prefix
+    function detectType(cardNum) {
+        const cleaned = cardNum.replace(/[\s-]/g, '');
+        if (cleaned.startsWith('4')) return 'Visa';
+        if (/^5[1-5]/.test(cleaned) || /^222[1-9]/.test(cleaned) || /^22[3-9]/.test(cleaned) || /^2[3-6]/.test(cleaned) || /^27[0-1]/.test(cleaned) || /^2720/.test(cleaned)) return 'MasterCard';
+        if (/^(60|65|81|82|508|353|356)/.test(cleaned)) return 'RuPay';
+        if (/^3[47]/.test(cleaned)) return 'American Express';
+        if (/^6011/.test(cleaned) || /^65/.test(cleaned)) return 'Discover';
+        return cleaned.length === 16 ? 'RuPay' : 'Card';
+    }
+
+    function formatAndValidateCard(input) {
+        // Strip non-digits
+        let val = input.value.replace(/\D/g, '');
+        // Group in 4s
+        let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
+        input.value = formatted;
+
+        const preview = document.getElementById('cardNumberPreview');
+        preview.textContent = formatted || '•••• •••• •••• ••••';
+
+        const brand = detectType(val);
+        document.getElementById('cardBrandPreview').textContent = brand.toUpperCase();
+        document.getElementById('detectedBrand').textContent = brand;
+
+        const feedback = document.getElementById('luhnFeedback');
+        if (val.length >= 13) {
+            if (checkLuhn(val)) {
+                feedback.textContent = '✓ Valid card number (Luhn checksum passed)';
+                feedback.className = 'text-success fw-bold';
+            } else {
+                feedback.textContent = '✗ Invalid card number (Luhn checksum failed)';
+                feedback.className = 'text-danger fw-bold';
+            }
+        } else {
+            feedback.textContent = 'Must be a valid 13-19 digit number satisfying Luhn check.';
+            feedback.className = 'text-white-50';
+        }
+    }
+
+    function updatePreview() {
+        const holder = document.getElementById('card_holder').value || '{{ order.buyer.username }}';
+        document.getElementById('cardHolderPreview').textContent = holder.toUpperCase();
+
+        const m = document.getElementById('exp_month').value || 'MM';
+        const y = document.getElementById('exp_year').value ? document.getElementById('exp_year').value.slice(-2) : 'YY';
+        document.getElementById('cardExpiryPreview').textContent = `${m}/${y}`;
+    }
+
+    function fillTestCard(num, month, year, cvv, brand, bank) {
+        selectPaymentType('card');
+        const numInput = document.getElementById('card_number');
+        numInput.value = num;
+        formatAndValidateCard(numInput);
+
+        document.getElementById('exp_month').value = month;
+        document.getElementById('exp_year').value = year;
+        document.getElementById('cvv').value = cvv;
+        document.getElementById('bank_name').value = bank;
+        updatePreview();
+    }
+</script>
+{% endblock %}

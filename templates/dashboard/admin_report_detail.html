@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+{% block meta_description %}{{ report_description }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="container-fluid px-lg-4 mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:admin_dashboard' %}">Admin Console</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:admin_reports_hub' %}">Reports Hub</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ report_title }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-2 page-min-height pb-5">
+
+    <div class="row g-4 align-items-start">
+        <!-- Sidebar Column -->
+        <div class="col-lg-3 col-md-4">
+            {% include 'dashboard/admin_sidebar.html' %}
+        </div>
+
+        <!-- Main Report Column -->
+        <div class="col-lg-9 col-md-8 admin-content-min-height">
+            <!-- Header Banner with Export Actions -->
+            <div class="card card-antique p-4 mb-4 border-secondary border-opacity-25 shadow-sm">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-1 mb-2">
+                            <i class="bi bi-file-earmark-bar-graph me-1"></i> ENTERPRISE AUDIT REPORT
+                        </span>
+                        <h2 class="brand-font text-white mb-1">{{ report_title }}</h2>
+                        <p class="text-white-50 small mb-0">{{ report_description }}</p>
+                    </div>
+                    <!-- Export Actions -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="?{% if start_str %}start_date={{ start_str }}&{% endif %}{% if end_str %}end_date={{ end_str }}&{% endif %}{% if selected_role %}role={{ selected_role }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_pay_status %}pay_status={{ selected_pay_status }}&{% endif %}{% if selected_method %}method={{ selected_method }}&{% endif %}export=csv" 
+                           class="btn btn-outline-secondary btn-sm px-3 fw-bold shadow-sm"
+                           id="btnExportCSV"
+                           title="Download Standard CSV Spreadsheet">
+                            <i class="bi bi-filetype-csv me-1 text-success"></i> Export CSV
+                        </a>
+                        <a href="?{% if start_str %}start_date={{ start_str }}&{% endif %}{% if end_str %}end_date={{ end_str }}&{% endif %}{% if selected_role %}role={{ selected_role }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_pay_status %}pay_status={{ selected_pay_status }}&{% endif %}{% if selected_method %}method={{ selected_method }}&{% endif %}export=pdf" 
+                           class="btn btn-antique-gold btn-sm px-3 fw-bold shadow-sm"
+                           id="btnExportPDF"
+                           title="Download Official PDF Document (ReportLab)">
+                            <i class="bi bi-file-earmark-pdf me-1 text-danger"></i> Export PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Range & Criteria Filter Console -->
+            <div class="card card-antique border-secondary border-opacity-25 p-3 mb-4 shadow-sm">
+                <form method="get" class="row g-3 align-items-end">
+                    <!-- Start Date -->
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label small text-warning fw-bold text-uppercase mb-1">
+                            <i class="bi bi-calendar-event me-1"></i> Start Date
+                        </label>
+                        <input type="date" name="start_date" id="reportStartDate" class="form-control form-control-sm bg-dark text-white border-secondary border-opacity-50" value="{{ start_str }}">
+                    </div>
+
+                    <!-- End Date -->
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label small text-warning fw-bold text-uppercase mb-1">
+                            <i class="bi bi-calendar-check me-1"></i> End Date
+                        </label>
+                        <input type="date" name="end_date" id="reportEndDate" class="form-control form-control-sm bg-dark text-white border-secondary border-opacity-50" value="{{ end_str }}">
+                    </div>
+
+                    <!-- Report Specific Dropdowns -->
+                    {% if report_type == 'users' %}
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Role</label>
+                            <select name="role" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Roles --</option>
+                                {% for r in roles %}
+                                    <option value="{{ r.role }}" {% if selected_role|lower == r.role|lower %}selected{% endif %}>{{ r.role }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Status</label>
+                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Statuses --</option>
+                                <option value="Active" {% if selected_status == 'Active' %}selected{% endif %}>Active</option>
+                                <option value="Inactive" {% if selected_status == 'Inactive' %}selected{% endif %}>Inactive / Blocked</option>
+                                <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
+                            </select>
+                        </div>
+                    {% elif report_type == 'items' %}
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Category</label>
+                            <select name="category_id" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Categories --</option>
+                                {% for c in categories %}
+                                    <option value="{{ c.catid }}" {% if selected_category_id == c.catid|stringformat:"i" %}selected{% endif %}>{{ c.category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Status</label>
+                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Statuses --</option>
+                                <option value="Available" {% if selected_status == 'Available' %}selected{% endif %}>Available</option>
+                                <option value="Out of Stock" {% if selected_status == 'Out of Stock' %}selected{% endif %}>Out of Stock</option>
+                                <option value="Hidden" {% if selected_status == 'Hidden' %}selected{% endif %}>Hidden</option>
+                            </select>
+                        </div>
+                    {% elif report_type == 'orders' %}
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Order Status</label>
+                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Statuses --</option>
+                                <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Confirmed" {% if selected_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="Shipped" {% if selected_status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                <option value="Delivered" {% if selected_status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                <option value="Cancelled" {% if selected_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Payment</label>
+                            <select name="pay_status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Statuses --</option>
+                                <option value="Paid" {% if selected_pay_status == 'Paid' %}selected{% endif %}>Paid</option>
+                                <option value="Unpaid" {% if selected_pay_status == 'Unpaid' %}selected{% endif %}>Unpaid</option>
+                            </select>
+                        </div>
+                    {% elif report_type == 'sales' %}
+                        <div class="col-md-4 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Payment Status Filter</label>
+                            <select name="pay_status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="Paid" {% if selected_pay_status == 'Paid' %}selected{% endif %}>Paid Orders Only (Verified Sales)</option>
+                                <option value="all" {% if selected_pay_status == 'all' %}selected{% endif %}>All Orders (Paid + Unpaid)</option>
+                            </select>
+                        </div>
+                    {% elif report_type == 'payments' %}
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Method</label>
+                            <select name="method" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Methods --</option>
+                                <option value="Credit Card" {% if selected_method == 'Credit Card' %}selected{% endif %}>Credit Card</option>
+                                <option value="Debit Card" {% if selected_method == 'Debit Card' %}selected{% endif %}>Debit Card</option>
+                                <option value="Cash on Delivery" {% if selected_method == 'Cash on Delivery' %}selected{% endif %}>Cash on Delivery</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Status</label>
+                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Statuses --</option>
+                                <option value="Success" {% if selected_status == 'Success' %}selected{% endif %}>Success</option>
+                                <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Failed" {% if selected_status == 'Failed' %}selected{% endif %}>Failed</option>
+                            </select>
+                        </div>
+                    {% elif report_type == 'stock' %}
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Category</label>
+                            <select name="category_id" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Categories --</option>
+                                {% for c in categories %}
+                                    <option value="{{ c.catid }}" {% if selected_category_id == c.catid|stringformat:"i" %}selected{% endif %}>{{ c.category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <label class="form-label small text-warning fw-bold text-uppercase mb-1">Stock Status</label>
+                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-50">
+                                <option value="">-- All Levels --</option>
+                                <option value="in_stock" {% if selected_status == 'in_stock' %}selected{% endif %}>In Stock (&gt; 2 units)</option>
+                                <option value="low_stock" {% if selected_status == 'low_stock' %}selected{% endif %}>Low Stock Warning (&le; 2 units)</option>
+                                <option value="out_of_stock" {% if selected_status == 'out_of_stock' %}selected{% endif %}>Out of Stock (0 units)</option>
+                            </select>
+                        </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-antique-gold w-100 fw-bold shadow-sm" id="btnFilterReport">
+                            <i class="bi bi-funnel me-1"></i> Apply
+                        </button>
+                        {% if start_str or end_str or selected_status or selected_role or selected_category_id or selected_method or selected_pay_status != 'Paid' and report_type == 'sales' %}
+                            <a href="?" class="btn btn-sm btn-outline-danger" title="Clear Date & Criteria Filters">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Report KPI Summary Ribbon -->
+            <div class="row g-2 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                        <div class="text-white-50 small text-uppercase">Filtered Records</div>
+                        <div class="fs-4 fw-bold text-warning font-monospace">{{ total_records }}</div>
+                    </div>
+                </div>
+
+                {% if report_type == 'items' %}
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Catalog Valuation</div>
+                            <div class="fs-4 fw-bold text-success font-monospace">₹{{ total_val|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                {% elif report_type == 'orders' %}
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Gross Total Volume</div>
+                            <div class="fs-4 fw-bold text-success font-monospace">₹{{ gross_volume|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                {% elif report_type == 'sales' %}
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Net Realized Sales</div>
+                            <div class="fs-4 fw-bold text-success font-monospace">₹{{ net_sales|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Shipping Collected</div>
+                            <div class="fs-4 fw-bold text-info font-monospace">₹{{ total_shipping|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                {% elif report_type == 'payments' %}
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Settled Volume</div>
+                            <div class="fs-4 fw-bold text-success font-monospace">₹{{ settled_volume|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                {% elif report_type == 'stock' %}
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Available Units</div>
+                            <div class="fs-4 fw-bold text-success font-monospace">{{ total_available_units }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="card card-antique border-secondary border-opacity-25 p-2 px-3 text-center shadow-sm">
+                            <div class="text-white-50 small text-uppercase">Total Arrived Units</div>
+                            <div class="fs-4 fw-bold text-info font-monospace">{{ total_arrived_units }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Data Table Card -->
+            <div class="card card-antique border-secondary border-opacity-25 shadow-sm p-0 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0" id="reportDataTable">
+                        <thead class="bg-dark border-secondary border-opacity-50 text-warning small text-uppercase font-monospace">
+                            <tr>
+                                {% if report_type == 'users' %}
+                                    <th># ID</th>
+                                    <th>Username</th>
+                                    <th>Contact Name</th>
+                                    <th>Role</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Date Joined</th>
+                                {% elif report_type == 'items' %}
+                                    <th>SKU</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Seller</th>
+                                    <th>Age</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Listed Date</th>
+                                {% elif report_type == 'orders' %}
+                                    <th>Order #</th>
+                                    <th>Buyer</th>
+                                    <th>Order Date</th>
+                                    <th>Items Count</th>
+                                    <th>Shipping</th>
+                                    <th>Grand Total</th>
+                                    <th>Fulfillment</th>
+                                    <th>Payment</th>
+                                {% elif report_type == 'sales' %}
+                                    <th>Order #</th>
+                                    <th>Date</th>
+                                    <th>Buyer</th>
+                                    <th>Items Summary</th>
+                                    <th>Gross Amount</th>
+                                    <th>Shipping</th>
+                                    <th>Net Revenue</th>
+                                    <th>Status</th>
+                                {% elif report_type == 'payments' %}
+                                    <th>Txn Reference</th>
+                                    <th>Order #</th>
+                                    <th>Buyer</th>
+                                    <th>Method</th>
+                                    <th>Bank / Network</th>
+                                    <th>Card Last 4</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                {% elif report_type == 'stock' %}
+                                    <th>SKU</th>
+                                    <th>Artifact Title</th>
+                                    <th>Category</th>
+                                    <th>Seller</th>
+                                    <th>Total Arrived</th>
+                                    <th>Current Stock</th>
+                                    <th>Status</th>
+                                    <th>Alert</th>
+                                    <th>Updated Date</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if page_obj.object_list %}
+                                {% for row in page_obj %}
+                                    <tr class="border-secondary border-opacity-25">
+                                        {% if report_type == 'users' %}
+                                            <td><span class="badge bg-secondary font-monospace">#{{ row.userid }}</span></td>
+                                            <td><code>@{{ row.username }}</code></td>
+                                            <td class="fw-bold text-white">{{ row.contactname }}</td>
+                                            <td><span class="badge bg-info text-dark">{{ row.role.role }}</span></td>
+                                            <td class="small">{{ row.email }}</td>
+                                            <td class="small font-monospace">{{ row.phone }}</td>
+                                            <td class="small text-white-50">
+                                                {% if row.district %}{{ row.district.dist }}, {{ row.state.state }}{% else %}India{% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge {% if row.status == 'Active' %}bg-success{% elif row.status == 'Pending' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                                    {{ row.status }}
+                                                </span>
+                                            </td>
+                                            <td><small class="font-monospace text-white-50">{{ row.login.date_joined|date:"d-M-Y" }}</small></td>
+
+                                        {% elif report_type == 'items' %}
+                                            <td><code class="text-warning">{{ row.item }}</code></td>
+                                            <td class="fw-bold text-white text-truncate" style="max-width: 200px;">{{ row.title }}</td>
+                                            <td><span class="badge bg-secondary bg-opacity-50 text-warning">{{ row.category.category }}</span></td>
+                                            <td><small class="text-white-50">@{{ row.seller.username }}</small></td>
+                                            <td><span class="badge bg-dark border border-secondary">{{ row.years_old }}y</span></td>
+                                            <td><strong class="text-success font-monospace">₹{{ row.price }}</strong></td>
+                                            <td>
+                                                <span class="badge {% if row.current_stock > 2 %}bg-success{% elif row.current_stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %} font-monospace">
+                                                    {{ row.current_stock }}
+                                                </span>
+                                            </td>
+                                            <td><span class="badge bg-dark border">{{ row.status }}</span></td>
+                                            <td><small class="font-monospace text-white-50">{{ row.post_date|date:"d-M-Y" }}</small></td>
+
+                                        {% elif report_type == 'orders' %}
+                                            <td><span class="badge bg-secondary font-monospace">#{{ row.purchaseid }}</span></td>
+                                            <td class="fw-bold text-white">@{{ row.buyer.username }}</td>
+                                            <td><small class="font-monospace text-white-50">{{ row.purdate|date:"d-M-Y H:i" }}</small></td>
+                                            <td><span class="badge bg-dark border">{{ row.order_items.count }}</span></td>
+                                            <td><span class="small font-monospace">₹{{ row.ship_charge }}</span></td>
+                                            <td><strong class="text-success font-monospace">₹{{ row.tot_amt }}</strong></td>
+                                            <td><span class="badge bg-info text-dark">{{ row.status }}</span></td>
+                                            <td>
+                                                <span class="badge {% if row.pay_status == 'Paid' %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {{ row.pay_status }}
+                                                </span>
+                                            </td>
+
+                                        {% elif report_type == 'sales' %}
+                                            <td><span class="badge bg-secondary font-monospace">#{{ row.purchaseid }}</span></td>
+                                            <td><small class="font-monospace text-white-50">{{ row.purdate|date:"d-M-Y" }}</small></td>
+                                            <td class="fw-bold text-white">@{{ row.buyer.username }}</td>
+                                            <td>
+                                                <small class="text-white-50 text-truncate d-block" style="max-width: 220px;">
+                                                    {% for p in row.order_items.all|slice:":2" %}
+                                                        {{ p.quantity }}x {{ p.item.title }}{% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </small>
+                                            </td>
+                                            <td><span class="small font-monospace">₹{{ row.items_total }}</span></td>
+                                            <td><span class="small font-monospace">₹{{ row.ship_charge }}</span></td>
+                                            <td><strong class="text-success font-monospace">₹{{ row.tot_amt }}</strong></td>
+                                            <td><span class="badge bg-success font-monospace">{{ row.pay_status }}</span></td>
+
+                                        {% elif report_type == 'payments' %}
+                                            <td><code class="text-warning small">{{ row.transaction_ref }}</code></td>
+                                            <td><span class="badge bg-secondary font-monospace">#{{ row.purchase_master.purchaseid }}</span></td>
+                                            <td class="fw-bold text-white">@{{ row.buyer.username }}</td>
+                                            <td><span class="badge bg-dark border">{{ row.method }}</span></td>
+                                            <td><small class="text-white-50">{{ row.bank_name|default:row.card_type|default:"COD" }}</small></td>
+                                            <td><span class="font-monospace text-white-50">{% if row.card_last4 %}****{{ row.card_last4 }}{% else %}-{% endif %}</span></td>
+                                            <td><strong class="text-success font-monospace">₹{{ row.amount }}</strong></td>
+                                            <td><span class="badge bg-success">{{ row.status }}</span></td>
+                                            <td><small class="font-monospace text-white-50">{{ row.pay_date|date:"d-M-Y H:i" }}</small></td>
+
+                                        {% elif report_type == 'stock' %}
+                                            <td><code class="text-warning">{{ row.item.item }}</code></td>
+                                            <td class="fw-bold text-white text-truncate" style="max-width: 200px;">{{ row.item.title }}</td>
+                                            <td><span class="badge bg-secondary bg-opacity-50 text-warning">{{ row.item.category.category }}</span></td>
+                                            <td><small class="text-white-50">@{{ row.item.seller.username }}</small></td>
+                                            <td><span class="badge bg-dark border font-monospace">{{ row.tot_arr_stock }}</span></td>
+                                            <td>
+                                                <strong class="font-monospace {% if row.cur_stock > 2 %}text-success{% elif row.cur_stock > 0 %}text-warning{% else %}text-danger{% endif %}">
+                                                    {{ row.cur_stock }}
+                                                </strong>
+                                            </td>
+                                            <td><span class="badge bg-dark border">{{ row.status }}</span></td>
+                                            <td>
+                                                {% if row.is_low_stock %}
+                                                    <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle-fill me-1"></i>Low Stock</span>
+                                                {% elif row.is_out_of_stock %}
+                                                    <span class="badge bg-danger">Out of Stock</span>
+                                                {% else %}
+                                                    <span class="badge bg-success">OK</span>
+                                                {% endif %}
+                                            </td>
+                                            <td><small class="font-monospace text-white-50">{{ row.stockdate|date:"d-M-Y" }}</small></td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="10" class="text-center py-5 text-white-50">
+                                        <i class="bi bi-file-earmark-x display-5 text-warning d-block mb-3"></i>
+                                        <h5>No Audit Records Found</h5>
+                                        <p class="small mb-0">No records matched your selected date range and filter criteria.</p>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <div class="card-footer bg-dark border-secondary border-opacity-25 py-3">
+                        <nav aria-label="Report pagination">
+                            <ul class="pagination pagination-sm justify-content-center mb-0">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link bg-dark text-white border-secondary border-opacity-50" href="?{% if start_str %}start_date={{ start_str }}&{% endif %}{% if end_str %}end_date={{ end_str }}&{% endif %}{% if selected_role %}role={{ selected_role }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_pay_status %}pay_status={{ selected_pay_status }}&{% endif %}{% if selected_method %}method={{ selected_method }}&{% endif %}page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link bg-dark text-white-50 border-secondary border-opacity-50">&laquo; Previous</span></li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active"><span class="page-link bg-warning text-dark border-warning fw-bold">{{ num }}</span></li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link bg-dark text-white border-secondary border-opacity-50" href="?{% if start_str %}start_date={{ start_str }}&{% endif %}{% if end_str %}end_date={{ end_str }}&{% endif %}{% if selected_role %}role={{ selected_role }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_pay_status %}pay_status={{ selected_pay_status }}&{% endif %}{% if selected_method %}method={{ selected_method }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link bg-dark text-white border-secondary border-opacity-50" href="?{% if start_str %}start_date={{ start_str }}&{% endif %}{% if end_str %}end_date={{ end_str }}&{% endif %}{% if selected_role %}role={{ selected_role }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_pay_status %}pay_status={{ selected_pay_status }}&{% endif %}{% if selected_method %}method={{ selected_method }}&{% endif %}page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link bg-dark text-white-50 border-secondary border-opacity-50">Next &raquo;</span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

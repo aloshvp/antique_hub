@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seller Verification Pending — Antique Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5 page-min-height pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9 text-center">
+            <div class="card card-antique shadow-lg border-0 p-4 p-md-5">
+                <div class="d-inline-flex p-3 rounded-circle bg-warning bg-opacity-25 text-warning-emphasis mb-3 mx-auto shadow-sm">
+                    <i class="bi bi-hourglass-split display-4"></i>
+                </div>
+                <span class="badge bg-warning text-dark px-3 py-2 text-uppercase fw-bold letter-spacing-1 mx-auto mb-3">
+                    Status: Verification Pending (Dealer Verification Pending)
+                </span>
+                <h2 class="font-serif mb-2">Your Seller Application is Under Review</h2>
+                <p class="text-muted mb-4">
+                    Welcome, <strong>{{ profile.contactname|default:user.username }}</strong>! Thank you for applying to list on Antique Hub.
+                    In accordance with our authenticity and quality guidelines, our Administrator is reviewing your credentials.
+                </p>
+
+                <div class="card bg-light border p-3 text-start small mb-4">
+                    <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-info-circle text-warning me-1"></i> Application Summary:</h6>
+                    <ul class="list-unstyled mb-0 text-muted">
+                        <li class="mb-1"><strong>Username:</strong> {{ user.username }}</li>
+                        <li class="mb-1"><strong>Contact Phone:</strong> {{ profile.phone }}</li>
+                        <li class="mb-1"><strong>Email:</strong> {{ profile.email }}</li>
+                        <li class="mb-1"><strong>Location:</strong> {{ profile.location.locname }}, {{ profile.district.dist }}, {{ profile.state.state }}</li>
+                        <li class="mb-0"><strong>Submitted Date:</strong> {{ profile.regdate|date:"d M Y, h:i A" }}</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-info small text-start border-0 border-start border-4 border-info">
+                    <i class="bi bi-shield-check me-2 fs-5 align-middle text-info"></i>
+                    <strong>What happens next?</strong> Once verified by the Administrator, you will be granted access to the Seller Console to upload antique items, dual photographs, origin provenance, and manage live inventory.
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+                    <a href="{% url 'accounts:profile_view' %}" class="btn btn-antique-dark">
+                        <i class="bi bi-person-lines-fill me-1"></i> View Profile Details
+                    </a>
+                    <a href="{% url 'accounts:home' %}" class="btn btn-antique-outline">
+                        <i class="bi bi-house me-1"></i> Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart & Order Summary | Antique Hub{% endblock %}
+{% block meta_description %}Review your selected heritage artifacts, calculate promotional category discounts, and proceed to secure order confirmation on Antique Hub.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalog:item_list' %}">Marketplace</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2 page-min-height pb-5">
+
+    <!-- Page Title Header -->
+    <div class="card card-antique p-4 mb-4 border-secondary border-opacity-25 shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-2 mb-2 font-monospace fw-bold">
+                    <i class="bi bi-cart3 me-1"></i> BUYER SHOPPING CART
+                </span>
+                <h2 class="brand-font text-warning mb-1">Heritage Acquisition Cart</h2>
+                <p class="text-white-50 mb-0">
+                    Review your curated historical treasures, verify quantities, and proceed to confirmed checkout.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'catalog:item_list' %}" class="btn btn-outline-warning">
+                    <i class="bi bi-plus-circle me-1"></i> Continue Browsing
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if cart_items %}
+        <div class="row g-4 align-items-start">
+            <!-- Left Column: Cart Items List -->
+            <div class="col-lg-8">
+                <div class="card card-antique border-secondary border-opacity-25 shadow-sm overflow-hidden mb-4">
+                    <div class="card-header bg-dark bg-opacity-75 border-secondary border-opacity-25 p-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold text-white">
+                            <i class="bi bi-collection me-2 text-warning"></i> Curated Items ({{ items_count }} unit{{ items_count|pluralize }})
+                        </span>
+                        <span class="badge bg-secondary bg-opacity-25 text-white-50 font-monospace">
+                            Cart &amp; Order Acquisition Ledger
+                        </span>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for entry in cart_items %}
+                            {% with item=entry.item %}
+                            <div class="list-group-item bg-transparent border-secondary border-opacity-25 p-3 p-md-4">
+                                <div class="row g-3 align-items-center">
+                                    <!-- Thumbnail -->
+                                    <div class="col-3 col-md-2 text-center">
+                                        <div class="rounded border border-secondary border-opacity-50 overflow-hidden bg-dark" style="height: 90px;">
+                                            {% if item.image1 %}
+                                                <img src="{{ item.image1.url }}" alt="{{ item.title }}" class="w-100 h-100 object-fit-cover">
+                                            {% else %}
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary">
+                                                    <i class="bi bi-image fs-3"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Item Details -->
+                                    <div class="col-9 col-md-5">
+                                        <div class="d-flex gap-2 align-items-center mb-1">
+                                            <span class="badge bg-secondary bg-opacity-25 text-warning small">
+                                                {{ item.category.category }}
+                                            </span>
+                                            {% if item.has_discount %}
+                                                <span class="badge bg-danger small font-monospace">
+                                                    {{ item.discount_percent|floatformat:0 }}% OFF
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <h5 class="brand-font mb-1">
+                                            <a href="{% url 'catalog:item_detail' item.itemid %}" class="text-white text-decoration-none hover-warning">
+                                                {{ item.title }}
+                                            </a>
+                                        </h5>
+                                        <div class="text-white-50 small mb-1">
+                                            <i class="bi bi-geo-alt text-warning me-1"></i>
+                                            {% if item.seller.userprofile and item.seller.userprofile.district %}
+                                                {{ item.seller.userprofile.district.dist }}, {{ item.seller.userprofile.state.state }}
+                                            {% else %}
+                                                {{ item.origin }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-muted small font-monospace">
+                                            SKU: {{ item.item }} &bull; Dealer: {{ item.seller.username }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity Updater Form -->
+                                    <div class="col-6 col-md-3">
+                                        <form method="post" action="{% url 'orders:update_cart_quantity' entry.cartid %}" class="d-flex align-items-center gap-2">
+                                            {% csrf_token %}
+                                            <label class="small text-white-50 d-none d-md-inline">Qty:</label>
+                                            <input type="number" 
+                                                   name="quantity" 
+                                                   value="{{ entry.quantity }}" 
+                                                   min="1" 
+                                                   max="{{ item.current_stock }}" 
+                                                   class="form-control form-control-sm form-control-antique text-center" 
+                                                   style="width: 70px;"
+                                                   required>
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Update Quantity">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </button>
+                                        </form>
+                                        <div class="mt-1 small">
+                                            {% if item.current_stock <= 2 %}
+                                                <span class="text-danger small"><i class="bi bi-exclamation-circle me-1"></i>Only {{ item.current_stock }} left!</span>
+                                            {% else %}
+                                                <span class="text-white-50 small">{{ item.current_stock }} available</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Price & Actions -->
+                                    <div class="col-6 col-md-2 text-end">
+                                        <div>
+                                            {% if item.has_discount %}
+                                                <div class="text-white-50 text-decoration-line-through small">
+                                                    ₹{{ entry.original_subtotal|floatformat:2 }}
+                                                </div>
+                                                <div class="fs-5 fw-bold text-success font-monospace">
+                                                    ₹{{ entry.subtotal|floatformat:2 }}
+                                                </div>
+                                                <div class="text-success small" style="font-size: 0.75rem;">
+                                                    Saved ₹{{ entry.discount_saved|floatformat:2 }}
+                                                </div>
+                                            {% else %}
+                                                <div class="fs-5 fw-bold text-warning font-monospace">
+                                                    ₹{{ entry.subtotal|floatformat:2 }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="mt-2">
+                                            <a href="{% url 'orders:remove_from_cart' entry.cartid %}" 
+                                               class="btn btn-sm btn-outline-danger" 
+                                               title="Remove Item (with confirmation)">
+                                                <i class="bi bi-trash3 me-1"></i> Remove
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Guarantee & Assurance Banner -->
+                <div class="card card-antique p-3 border-secondary border-opacity-25 bg-dark bg-opacity-50">
+                    <div class="row g-3 text-center small text-white-50">
+                        <div class="col-md-4">
+                            <i class="bi bi-shield-check text-warning fs-5 d-block mb-1"></i>
+                            <strong class="text-white d-block">Row-Locked Inventory</strong>
+                            Stock reduces atomically upon order confirmation.
+                        </div>
+                        <div class="col-md-4">
+                            <i class="bi bi-patch-check text-warning fs-5 d-block mb-1"></i>
+                            <strong class="text-white d-block">Authenticity Assured</strong>
+                            Audited antiquarians across Indian heritage hubs.
+                        </div>
+                        <div class="col-md-4">
+                            <i class="bi bi-truck text-warning fs-5 d-block mb-1"></i>
+                            <strong class="text-white d-block">Insured Heritage Courier</strong>
+                            Specialized packaging for historical relics.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Financial Summary Sidebar -->
+            <div class="col-lg-4">
+                <div class="card card-antique border-secondary border-opacity-25 shadow-sm sticky-filter-sidebar" id="cartSummarySidebar">
+                    <div class="card-header bg-dark bg-opacity-75 border-secondary border-opacity-25 p-3">
+                        <h5 class="brand-font text-warning mb-0">
+                            <i class="bi bi-receipt me-2"></i> Acquisition Summary
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Line items -->
+                        <div class="d-flex justify-content-between text-white-50 mb-2">
+                            <span>Artifacts MRP Total ({{ items_count }} item{{ items_count|pluralize }}):</span>
+                            <span class="text-white font-monospace">₹{{ items_total|floatformat:2 }}</span>
+                        </div>
+
+                        {% if discount_total > 0 %}
+                            <div class="d-flex justify-content-between text-success mb-2">
+                                <span><i class="bi bi-tag-fill me-1"></i> Category Discount Savings:</span>
+                                <span class="font-monospace">-₹{{ discount_total|floatformat:2 }}</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between text-white-50 mb-2">
+                            <span>Net Artifacts Subtotal:</span>
+                            <span class="text-white font-monospace">₹{{ subtotal|floatformat:2 }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between text-white-50 mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+                            <span>Insured Heritage Shipping:</span>
+                            {% if free_shipping_eligible %}
+                                <span class="text-success font-monospace fw-bold">FREE (Orders &ge; ₹50,000)</span>
+                            {% else %}
+                                <span class="text-white font-monospace">₹{{ shipping_charge|floatformat:2 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Grand Total -->
+                        <div class="d-flex justify-content-between align-items-baseline mb-4">
+                            <span class="fs-5 brand-font text-white">Grand Total:</span>
+                            <span class="fs-3 fw-bold text-warning font-monospace">
+                                ₹{{ grand_total|floatformat:2 }}
+                            </span>
+                        </div>
+
+                        <!-- Confirm Order Action Form -->
+                        <form method="post" action="{% url 'orders:confirm_order' %}" id="confirmOrderForm">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-antique-gold btn-lg w-100 shadow py-3 font-monospace fw-bold" id="btnConfirmOrder">
+                                <i class="bi bi-bag-check-fill me-2"></i> CONFIRM &amp; PLACE ORDER
+                            </button>
+                        </form>
+
+                        <p class="text-white-50 small text-center mt-3 mb-0">
+                            <i class="bi bi-info-circle me-1 text-warning"></i> Order status starts as <strong>Pending (Unpaid)</strong>. You can inspect tracking and pay securely via payment gateway.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Empty Cart Display with Antique Illustration -->
+        <div class="empty-state-antique shadow-sm">
+            <div class="empty-state-icon-wrapper">
+                <i class="bi bi-cart-x"></i>
+            </div>
+            <h3 class="empty-state-title">Your Heritage Cart is Currently Empty</h3>
+            <p class="empty-state-desc">
+                Explore our authenticated collections of historical coins, royal colonial furniture, and sacred bronze artefacts to add exquisite relics to your acquisition cart.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'catalog:item_list' %}" class="btn btn-antique-gold px-4 py-2">
+                    <i class="bi bi-grid me-2"></i> Browse Marketplace
+                </a>
+                <a href="{% url 'community:watchlist_view' %}" class="btn btn-antique-outline px-4 py-2">
+                    <i class="bi bi-heart me-2"></i> View Saved Watchlist
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

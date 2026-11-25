@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Commentary | Antique Hub{% endblock %}
+{% block meta_description %}Modify your review and commentary on antique artifact {{ comment.item.title }} on Antique Hub.{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}" class="text-decoration-none text-warning"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalog:item_detail' comment.item.itemid %}" class="text-decoration-none text-warning">{{ comment.item.title }}</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Edit Commentary</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-antique border-secondary border-opacity-25 shadow-lg p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    <div>
+                        <h3 class="brand-font text-white mb-1">Edit Your Commentary</h3>
+                        <p class="text-white-50 small mb-0">
+                            Artifact: <strong class="text-warning">{{ comment.item.title }}</strong> &bull;
+                            Category: {{ comment.item.category.category }}
+                        </p>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Rating Selector -->
+                    <div class="mb-4">
+                        <label for="ratingSelect" class="form-label text-white-50 small">Collector Star Rating (Optional)</label>
+                        <select name="rating" id="ratingSelect" class="form-select form-select-antique font-monospace">
+                            <option value="">-- No Star Rating --</option>
+                            {% for val, label in rating_choices %}
+                                <option value="{{ val }}" {% if comment.rating == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Comment Textarea -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label for="commentText" class="form-label text-white-50 small mb-0">Your Review / Commentary <span class="text-danger">*</span></label>
+                            <small class="text-white-50">3 to 1,000 characters</small>
+                        </div>
+                        <textarea name="comments" id="commentText" class="form-control form-control-antique" rows="5" maxlength="1000" required>{{ comment.comments }}</textarea>
+                        <small class="text-white-50 d-block mt-1">Profane and abusive terminology will automatically be filtered.</small>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-25">
+                        <a href="{% url 'catalog:item_detail' comment.item.itemid %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-antique-gold px-4 shadow">
+                            <i class="bi bi-check2-circle me-1"></i> Update Commentary
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

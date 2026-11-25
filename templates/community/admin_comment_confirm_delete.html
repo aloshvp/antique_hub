@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Moderate Delete | Admin Console | Antique Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-antique border-danger border-opacity-50 p-4 p-md-5 text-center shadow-lg">
+                <i class="bi bi-shield-x text-danger fs-1 mb-3"></i>
+                <h3 class="brand-font text-white mb-2">Remove Abusive Commentary?</h3>
+                <p class="text-white-50 mb-4">
+                    Confirm deletion of Comment #{{ comment.id }} on <strong class="text-warning">{{ comment.item.title }}</strong> by @{{ comment.buyer.username }} for community policy violation.
+                </p>
+
+                <div class="card bg-dark bg-opacity-75 border-secondary border-opacity-25 p-3 text-start small mb-4">
+                    <div class="text-white-50 mb-1">
+                        Author: <strong class="text-white">@{{ comment.buyer.username }}</strong> &bull;
+                        Posted: {{ comment.cdate|date:"d M Y, H:i" }}
+                    </div>
+                    <div class="text-white">
+                        "{{ comment.comments }}"
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'community:admin_comments' %}" class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-4 shadow">
+                            <i class="bi bi-trash3-fill me-1"></i> Remove Content
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Antique Marketplace & Heritage Catalogue | Antique Hub{% endblock %}
+
+{% block breadcrumb %}
+<div class="container-fluid px-lg-5 mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Antique Marketplace</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-2 page-min-height pb-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge-curator-minimal">
+                    <i class="bi bi-compass"></i> Heritage Marketplace
+                </span>
+            </div>
+            <h2 class="font-serif mb-1 fs-3">Heritage Artifacts &amp; Rare Curations</h2>
+            <p class="text-muted small mb-0">Explore certified historical treasures across classical eras, royal dynasties, and regional master artisans</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge-cat-count">
+                Showing <strong>{{ page_obj.paginator.count }}</strong> artifact{{ page_obj.paginator.count|pluralize }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Active Filters Badge Bar -->
+    {% if active_filters_count > 0 or selected_sort != 'newest' %}
+        <div class="card card-antique mb-4 bg-light border-0 shadow-sm">
+            <div class="card-body p-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="small fw-bold text-muted"><i class="bi bi-funnel-fill text-warning me-1"></i> Active Filters:</span>
+
+                    {% if query %}
+                        <span class="badge bg-white text-dark border shadow-sm">
+                            Keyword: "{{ query }}"
+                            <a href="?{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_subcategory_id %}subcategory_id={{ selected_subcategory_id }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}{% if min_age %}min_age={{ min_age }}&{% endif %}{% if max_age %}max_age={{ max_age }}&{% endif %}sort={{ selected_sort }}" class="text-danger ms-1 text-decoration-none">&times;</a>
+                        </span>
+                    {% endif %}
+
+                    {% if selected_category_id %}
+                        {% for cat in categories %}
+                            {% if cat.catid|stringformat:"i" == selected_category_id %}
+                                <span class="badge bg-white text-dark border shadow-sm">
+                                    Category: {{ cat.category }}
+                                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}{% if min_age %}min_age={{ min_age }}&{% endif %}{% if max_age %}max_age={{ max_age }}&{% endif %}sort={{ selected_sort }}" class="text-danger ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if selected_subcategory_id %}
+                        {% for sub in subcategories %}
+                            {% if sub.subcatid|stringformat:"i" == selected_subcategory_id %}
+                                <span class="badge bg-white text-dark border shadow-sm">
+                                    SubCategory: {{ sub.subcategory }}
+                                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}sort={{ selected_sort }}" class="text-danger ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if min_price or max_price %}
+                        <span class="badge bg-white text-dark border shadow-sm">
+                            Price: ₹{{ min_price|default:"0" }} - ₹{{ max_price|default:"&infin;" }}
+                            <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_subcategory_id %}subcategory_id={{ selected_subcategory_id }}&{% endif %}{% if min_age %}min_age={{ min_age }}&{% endif %}{% if max_age %}max_age={{ max_age }}&{% endif %}sort={{ selected_sort }}" class="text-danger ms-1 text-decoration-none">&times;</a>
+                        </span>
+                    {% endif %}
+
+                    {% if min_age or max_age %}
+                        <span class="badge bg-white text-dark border shadow-sm">
+                            Age: {{ min_age|default:"1" }} - {{ max_age|default:"&infin;" }} Yrs
+                            <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category_id %}category_id={{ selected_category_id }}&{% endif %}{% if selected_subcategory_id %}subcategory_id={{ selected_subcategory_id }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}sort={{ selected_sort }}" class="text-danger ms-1 text-decoration-none">&times;</a>
+                        </span>
+                    {% endif %}
+
+                    {% if selected_sort == 'discounted' %}
+                        <span class="badge bg-danger text-white shadow-sm">
+                            <i class="bi bi-tag-fill me-1"></i> On Discount Only
+                        </span>
+                    {% endif %}
+                </div>
+
+                <a href="{% url 'catalog:item_list' %}" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-x-circle me-1"></i> Reset All Filters
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row g-4 align-items-start">
+        <!-- Sidebar Filters Column -->
+        <div class="col-lg-3 col-md-4">
+            <div class="card card-antique border-0 shadow-sm p-4 bg-white sticky-filter-sidebar" id="marketplaceFilterSidebar">
+                <h5 class="font-serif mb-3 d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-sliders text-warning me-2"></i> Refine Search</span>
+                    {% if active_filters_count > 0 %}
+                        <a href="{% url 'catalog:item_list' %}" class="small text-danger text-decoration-none" style="font-size: 0.8rem;">Clear</a>
+                    {% endif %}
+                </h5>
+
+                <form method="get" action="{% url 'catalog:item_list' %}" id="catalogFilterForm">
+                    <!-- Keyword Search -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted mb-1">Search Keywords</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" name="q" class="form-control" placeholder="SKU, title, origin..." value="{{ query }}">
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted mb-1">Category</label>
+                        <select name="category_id" class="form-select form-select-sm" id="categoryFilterSelect" onchange="this.form.submit()">
+                            <option value="">-- All Categories --</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.catid }}" {% if selected_category_id == cat.catid|stringformat:"i" %}selected{% endif %}>
+                                    {{ cat.category }} ({{ cat.active_item_count }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- SubCategory Filter -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted mb-1">SubCategory</label>
+                        <select name="subcategory_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">-- All SubCategories --</option>
+                            {% for sub in subcategories %}
+                                <option value="{{ sub.subcatid }}" {% if selected_subcategory_id == sub.subcatid|stringformat:"i" %}selected{% endif %}>
+                                    {{ sub.subcategory }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted mb-1">Price Range (₹)</label>
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <input type="number" name="min_price" class="form-control form-control-sm" placeholder="Min ₹" min="0" value="{{ min_price }}">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="max_price" class="form-control form-control-sm" placeholder="Max ₹" min="0" value="{{ max_price }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Age Range -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted mb-1">Artifact Age (Years)</label>
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <input type="number" name="min_age" class="form-control form-control-sm" placeholder="Min Yrs" min="1" value="{{ min_age }}">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="max_age" class="form-control form-control-sm" placeholder="Max Yrs" min="1" value="{{ max_age }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sort Ordering -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold text-muted mb-1">Sort Collection</label>
+                        <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Newest Catalog Arrivals</option>
+                            <option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="oldest" {% if selected_sort == 'oldest' %}selected{% endif %}>Artifact Age: Oldest First</option>
+                            <option value="discounted" {% if selected_sort == 'discounted' %}selected{% endif %}>🏷️ On Promotional Discount</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit & Reset -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-sm btn-antique-gold">
+                            <i class="bi bi-funnel me-1"></i> Apply Filters
+                        </button>
+                        {% if active_filters_count > 0 or selected_sort != 'newest' %}
+                            <a href="{% url 'catalog:item_list' %}" class="btn btn-sm btn-outline-secondary">
+                                Reset
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Catalogue Grid Column -->
+        <div class="col-lg-9 col-md-8 catalog-content-min-height">
+            {% if page_obj.object_list %}
+                <div class="row g-4">
+                    {% for item in page_obj %}
+                        <div class="col-lg-4 col-sm-6">
+                            <div class="card card-antique h-100 overflow-hidden d-flex flex-column">
+                                <!-- Photo Container with Status & Discount Badges -->
+                                <div class="artifact-img-wrap position-relative text-center" style="height: 230px;">
+                                    {% if item.img1 %}
+                                        <a href="{% url 'catalog:item_detail' item.itemid %}">
+                                            <img src="{{ item.img1.url }}" alt="{{ item.title }}" class="w-100 h-100" style="object-fit: cover;">
+                                        </a>
+                                    {% else %}
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                            <i class="bi bi-image fs-1 opacity-25"></i>
+                                        </div>
+                                    {% endif %}
+
+                                    <!-- Discount Pill -->
+                                    {% if item.has_discount %}
+                                        <span class="badge-royal-discount position-absolute top-0 start-0 m-2">
+                                            {{ item.discount_percent|floatformat:0 }}% OFF
+                                        </span>
+                                    {% endif %}
+
+                                    <!-- Status / Era Pill -->
+                                    {% if item.current_stock <= 0 %}
+                                        <span class="badge bg-danger position-absolute top-0 end-0 m-2 rounded-pill px-2 py-1" style="font-size: 0.68rem;">Sold Out</span>
+                                    {% else %}
+                                        <span class="badge-royal-era position-absolute top-0 end-0 m-2">
+                                            {{ item.years_old }} Yrs
+                                        </span>
+                                    {% endif %}
+
+                                    <!-- Watchlist Heart Toggle (AJAX) -->
+                                    <div class="position-absolute bottom-0 end-0 m-2" style="z-index: 3;">
+                                        {% if user.is_authenticated %}
+                                            <button type="button" 
+                                                    class="btn btn-card-watchlist btn-ajax-watchlist shadow-sm"
+                                                    data-item-id="{{ item.itemid }}"
+                                                    data-url="{% url 'community:toggle_watchlist' item.itemid %}"
+                                                    title="{% if item.itemid in user_watchlist_ids %}Remove from Watchlist{% else %}Save to Watchlist{% endif %}"
+                                                    aria-label="Toggle Watchlist">
+                                                <i class="bi {% if item.itemid in user_watchlist_ids %}bi-heart-fill text-danger{% else %}bi-heart text-dark{% endif %}"></i>
+                                            </button>
+                                        {% else %}
+                                            <a href="{% url 'accounts:login' %}" 
+                                               class="btn btn-card-watchlist shadow-sm"
+                                               title="Sign in to save to Watchlist"
+                                               aria-label="Save to Watchlist">
+                                                <i class="bi bi-heart text-dark"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="card-body p-3 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="badge-antique-seal">
+                                            {{ item.category.category }}
+                                        </span>
+                                        <small class="text-muted" style="font-size: 0.75rem;"><code>{{ item.item }}</code></small>
+                                    </div>
+
+                                    <h5 class="font-serif fs-6 fw-bold mb-1">
+                                        <a href="{% url 'catalog:item_detail' item.itemid %}" class="text-dark text-decoration-none hover-gold line-clamp-2">
+                                            {{ item.title }}
+                                        </a>
+                                    </h5>
+
+                                    <small class="text-muted mb-2 d-block text-truncate">
+                                        <i class="bi bi-compass me-1 text-accent-gold"></i> {{ item.origin }}
+                                    </small>
+
+                                    <!-- Pricing Block -->
+                                    <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {% if item.has_discount %}
+                                                <div class="small text-muted text-decoration-line-through" style="font-size: 0.75rem;">₹{{ item.price }}</div>
+                                                <strong class="price-gold fs-5">₹{{ item.discounted_price }}</strong>
+                                            {% else %}
+                                                <strong class="price-gold fs-5">₹{{ item.price }}</strong>
+                                            {% endif %}
+                                        </div>
+
+                                        <a href="{% url 'catalog:item_detail' item.itemid %}" class="btn btn-sm btn-antique-gold px-3 shadow-sm rounded-pill">
+                                            View Artifact
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Card Footer: Seller Geographical Location -->
+                                <div class="card-footer bg-light px-3 py-2 small text-muted border-0 d-flex justify-content-between align-items-center" style="font-size: 0.78rem;">
+                                    <span class="text-truncate" style="max-width: 170px;">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                        {% if item.seller.userprofile.district %}
+                                            {{ item.seller.userprofile.district.dist }}, {{ item.seller.userprofile.state.state }}
+                                        {% else %}
+                                            India
+                                        {% endif %}
+                                    </span>
+                                    <span class="text-muted">
+                                        <i class="bi bi-person me-1"></i>@{{ item.seller.username }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <div class="d-flex justify-content-between align-items-center p-3 border rounded bg-white shadow-sm mt-4 small text-muted">
+                        <div>
+                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} items
+                        </div>
+                        <nav aria-label="Marketplace Catalogue Pagination">
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category_id={{ selected_category_id }}{% endif %}{% if selected_subcategory_id %}&subcategory_id={{ selected_subcategory_id }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if min_age %}&min_age={{ min_age }}{% endif %}{% if max_age %}&max_age={{ max_age }}{% endif %}&sort={{ selected_sort }}">Previous</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                        <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category_id={{ selected_category_id }}{% endif %}{% if selected_subcategory_id %}&subcategory_id={{ selected_subcategory_id }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if min_age %}&min_age={{ min_age }}{% endif %}{% if max_age %}&max_age={{ max_age }}{% endif %}&sort={{ selected_sort }}">{{ num }}</a>
+                                    </li>
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_id %}&category_id={{ selected_category_id }}{% endif %}{% if selected_subcategory_id %}&subcategory_id={{ selected_subcategory_id }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if min_age %}&min_age={{ min_age }}{% endif %}{% if max_age %}&max_age={{ max_age }}{% endif %}&sort={{ selected_sort }}">Next</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+
+            {% else %}
+                <div class="empty-state-antique shadow-sm">
+                    <div class="empty-state-icon-wrapper">
+                        <i class="bi bi-compass"></i>
+                    </div>
+                    <h3 class="empty-state-title">No Antique Artifacts Found</h3>
+                    <p class="empty-state-desc">No listings match your selected keyword, category, price, or age parameters. Try adjusting your search filters or browse all collections.</p>
+                    <div>
+                        <a href="{% url 'catalog:item_list' %}" class="btn btn-antique-gold px-4">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Clear All Filters
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

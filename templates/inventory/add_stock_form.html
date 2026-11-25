@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ action_title }} | Antique Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="card card-antique shadow-lg border-0">
+                <!-- Header -->
+                <div class="card-antique-header text-center py-4 bg-warning bg-opacity-10 border-bottom border-warning-subtle">
+                    <span class="badge bg-warning text-dark mb-2 px-3 py-1 text-uppercase fw-bold">
+                        <i class="bi bi-stack me-1"></i> Inventory Restock Ledger
+                    </span>
+                    <h3 class="font-serif mb-1">{{ action_title }}</h3>
+                    <p class="text-muted small mb-0">Record additional antique stock arrivals and update available marketplace units</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- Current Artifact Summary Preview -->
+                    <div class="card bg-light border p-3 mb-4">
+                        <div class="d-flex align-items-center gap-3">
+                            {% if stock.item.img1 %}
+                                <img src="{{ stock.item.img1.url }}" alt="{{ stock.item.title }}" class="rounded shadow-sm border" style="width: 75px; height: 75px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-secondary bg-opacity-25 rounded d-flex align-items-center justify-content-center text-muted" style="width: 75px; height: 75px;">
+                                    <i class="bi bi-image fs-3"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h5 class="font-serif text-dark mb-1">{{ stock.item.title }}</h5>
+                                <div class="small text-muted mb-2">
+                                    <code>{{ stock.item.item }}</code> &bull; {{ stock.item.category.category }}
+                                    {% if stock.item.subcategory %}&rsaquo; {{ stock.item.subcategory.subcategory }}{% endif %}
+                                    &bull; <strong>₹{{ stock.item.price }}</strong>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <span class="badge {% if stock.is_out_of_stock %}bg-danger{% elif stock.is_low_stock %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                        Current Stock: {{ stock.cur_stock }} unit{{ stock.cur_stock|pluralize }}
+                                    </span>
+                                    <span class="badge bg-light text-dark border">
+                                        Total Arrived: {{ stock.tot_arr_stock }}
+                                    </span>
+                                    {% if is_admin %}
+                                        <span class="badge bg-info-subtle text-dark border">
+                                            Seller: @{{ stock.item.seller.username }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Restock Notice -->
+                    <div class="alert alert-info py-2 px-3 small mb-4">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        Adding stock will increment both <strong>Total Arrived Stock</strong> and <strong>Current Available Stock</strong>, timestamp the stock ledger date, and automatically restore the listing status to <strong>Available</strong> if currently depleted.
+                    </div>
+
+                    <!-- Form -->
+                    <form method="post" novalidate id="restockForm">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small mb-3">
+                                {% for err in form.non_field_errors %}
+                                    <div>{{ err }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">{{ form.quantity_to_add.label }}</label>
+                            {{ form.quantity_to_add }}
+                            {% if form.quantity_to_add.errors %}
+                                <div class="text-danger small mt-1">{{ form.quantity_to_add.errors|first }}</div>
+                            {% endif %}
+                            <div class="form-text small text-muted">{{ form.quantity_to_add.help_text }}</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small">{{ form.notes.label }}</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                                <div class="text-danger small mt-1">{{ form.notes.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Live Projection Calculator -->
+                        <div class="card bg-warning bg-opacity-10 border border-warning-subtle p-3 mb-4 text-dark small" id="projectionBox">
+                            <h6 class="fw-bold mb-2"><i class="bi bi-calculator me-1"></i> Projected Ledger Balance:</h6>
+                            <div class="row g-2 text-center">
+                                <div class="col-6">
+                                    <div class="p-2 bg-white rounded border">
+                                        <span class="text-muted d-block small">New Available Stock</span>
+                                        <strong class="fs-5 text-success" id="projCurrent">{{ stock.cur_stock }}</strong> units
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 bg-white rounded border">
+                                        <span class="text-muted d-block small">New Total Arrived</span>
+                                        <strong class="fs-5 text-dark" id="projTotal">{{ stock.tot_arr_stock }}</strong> units
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            {% if is_admin %}
+                                <a href="{% url 'inventory:admin_stock' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Cancel
+                                </a>
+                            {% else %}
+                                <a href="{% url 'inventory:seller_stock' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Cancel
+                                </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-antique-gold px-4 shadow-sm" id="confirmRestockBtn">
+                                <i class="bi bi-plus-circle-fill me-1"></i> Confirm & Add Stock
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputQty = document.querySelector('input[name="quantity_to_add"]');
+    const projCurrent = document.getElementById('projCurrent');
+    const projTotal = document.getElementById('projTotal');
+
+    const baseCurrent = {{ stock.cur_stock }};
+    const baseTotal = {{ stock.tot_arr_stock }};
+
+    function updateProjection() {
+        const val = parseInt(inputQty.value, 10);
+        if (!isNaN(val) && val > 0) {
+            projCurrent.textContent = baseCurrent + val;
+            projTotal.textContent = baseTotal + val;
+        } else {
+            projCurrent.textContent = baseCurrent;
+            projTotal.textContent = baseTotal;
+        }
+    }
+
+    if (inputQty) {
+        inputQty.addEventListener('input', updateProjection);
+        updateProjection();
+    }
+});
+</script>
+{% endblock %}

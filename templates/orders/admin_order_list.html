@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Master Order Management — Admin Console | Antique Hub{% endblock %}
+{% block meta_description %}Supervise pan-India antique orders, audit dealer fulfillment, confirm pending orders, and manage courier transitions on Antique Hub.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container-fluid px-lg-5 mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:admin_dashboard' %}">Admin Console</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Master Orders Console</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-2">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-danger text-white px-2 py-1 text-uppercase fw-bold small">
+                    <i class="bi bi-shield-lock-fill me-1"></i> Admin Portal
+                </span>
+                <span class="text-white-50 small">Master Order Fulfillment Lifecycle</span>
+            </div>
+            <h2 class="brand-font text-warning mb-0">Master Orders Supervision Console</h2>
+            <p class="text-white-50 small mb-0">Audit dealer fulfillment, activate/confirm pending collector orders, and record logistics milestones</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'inventory:admin_stock' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-stack me-1"></i> Stock Management
+            </a>
+            <a href="{% url 'catalog:admin_items' %}" class="btn btn-antique-dark">
+                <i class="bi bi-boxes me-1"></i> Manage Listings
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Controls Card -->
+    <div class="card card-antique border-secondary border-opacity-25 shadow-sm p-3 mb-4">
+        <form method="get" class="row g-2 align-items-center">
+            <!-- Search Keyword -->
+            <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-dark border-secondary text-warning"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control form-control-antique form-control-sm" placeholder="Search by Order #ID, Buyer username, or email..." value="{{ query }}">
+                </div>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-md-3">
+                <select name="status" class="form-select form-select-antique form-select-sm" onchange="this.form.submit()">
+                    <option value="">All Fulfillment Stages</option>
+                    {% for code, label in status_choices %}
+                        <option value="{{ code }}" {% if selected_status == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Payment Filter -->
+            <div class="col-md-3">
+                <select name="pay_status" class="form-select form-select-antique form-select-sm" onchange="this.form.submit()">
+                    <option value="">All Payment Statuses</option>
+                    {% for code, label in pay_status_choices %}
+                        <option value="{{ code }}" {% if selected_pay_status == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-antique-gold flex-grow-1">Filter</button>
+                {% if query or selected_status or selected_pay_status %}
+                    <a href="{% url 'orders:admin_orders' %}" class="btn btn-sm btn-outline-secondary" title="Reset Filters"><i class="bi bi-x-circle"></i></a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Orders Master Table -->
+    {% if page_obj.object_list %}
+        <div class="card card-antique border-secondary border-opacity-25 shadow-sm overflow-hidden mb-4">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead class="table-secondary text-white font-serif">
+                        <tr>
+                            <th class="ps-3 py-3">Order ID</th>
+                            <th class="py-3">Date &amp; Time</th>
+                            <th class="py-3">Buyer (Collector)</th>
+                            <th class="py-3 text-center">Items</th>
+                            <th class="py-3">Grand Total</th>
+                            <th class="py-3">Fulfillment Status</th>
+                            <th class="py-3">Payment</th>
+                            <th class="pe-3 py-3 text-end">Administrative Controls</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in page_obj %}
+                            <tr>
+                                <td class="ps-3 fw-bold font-monospace text-warning">
+                                    #{{ order.purchaseid }}
+                                </td>
+                                <td class="text-white-50 small">
+                                    {{ order.purdate|date:"M d, Y" }}<br>
+                                    <span class="text-muted" style="font-size: 0.75rem;">{{ order.purdate|time:"H:i A" }}</span>
+                                </td>
+                                <td>
+                                    <strong class="text-white">{{ order.buyer.username }}</strong>
+                                    {% if order.buyer.userprofile and order.buyer.userprofile.contactname %}
+                                        <div class="text-white-50 small">{{ order.buyer.userprofile.contactname }}</div>
+                                    {% endif %}
+                                    <div class="text-muted small">{{ order.buyer.email }}</div>
+                                </td>
+                                <td class="text-center font-monospace">
+                                    <span class="badge bg-secondary bg-opacity-50 text-white">
+                                        {{ order.order_items.count }}
+                                    </span>
+                                </td>
+                                <td class="font-monospace fw-bold text-white">
+                                    ₹{{ order.tot_amt|floatformat:2 }}
+                                </td>
+                                <td>
+                                    {% if order.status == 'Pending' %}
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i>Pending</span>
+                                    {% elif order.status == 'Confirmed' %}
+                                        <span class="badge bg-info text-dark"><i class="bi bi-patch-check-fill me-1"></i>Confirmed</span>
+                                    {% elif order.status == 'Shipped' %}
+                                        <span class="badge bg-primary"><i class="bi bi-truck me-1"></i>Shipped</span>
+                                    {% elif order.status == 'Delivered' %}
+                                        <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>Delivered</span>
+                                    {% elif order.status == 'Cancelled' %}
+                                        <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Cancelled</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.pay_status == 'Paid' %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Paid</span>
+                                    {% elif order.pay_status == 'Unpaid' or order.pay_status == 'Pending' %}
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Unpaid</span>
+                                    {% elif order.pay_status == 'Refunded' %}
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle">Refunded</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.pay_status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="pe-3 text-end">
+                                    <div class="d-inline-flex gap-1">
+                                        <!-- Quick Transition Buttons -->
+                                        {% if order.status == 'Pending' %}
+                                            <!-- Confirm Order Processing -->
+                                            <form method="post" action="{% url 'orders:admin_update_status' order.purchaseid %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="status" value="Confirmed">
+                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                <button type="submit" class="btn btn-sm btn-info text-dark shadow-sm" title="Confirm Order &amp; Lock Inventory">
+                                                    <i class="bi bi-check2-circle me-1"></i> Confirm
+                                                </button>
+                                            </form>
+                                        {% elif order.status == 'Confirmed' %}
+                                            <!-- Dispatch Order Tracking -->
+                                            <form method="post" action="{% url 'orders:admin_update_status' order.purchaseid %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="status" value="Shipped">
+                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                <button type="submit" class="btn btn-sm btn-primary shadow-sm" title="Ship Artifact via Insured Courier">
+                                                    <i class="bi bi-truck me-1"></i> Ship
+                                                </button>
+                                            </form>
+                                        {% elif order.status == 'Shipped' %}
+                                            <!-- Mark Delivery Confirmation -->
+                                            <form method="post" action="{% url 'orders:admin_update_status' order.purchaseid %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="status" value="Delivered">
+                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                <button type="submit" class="btn btn-sm btn-success shadow-sm" title="Confirm Final Delivery to Buyer">
+                                                    <i class="bi bi-box2-heart me-1"></i> Deliver
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        <a href="{% url 'orders:order_detail' order.purchaseid %}" class="btn btn-sm btn-antique-dark" title="View Full Order Tracking">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <div class="card-footer bg-dark bg-opacity-75 border-secondary border-opacity-25 p-3 d-flex justify-content-between align-items-center">
+                    <span class="small text-white-50">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} ({{ page_obj.paginator.count }} master orders)
+                    </span>
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item active">
+                            <span class="page-link bg-warning text-dark border-warning">{{ page_obj.number }}</span>
+                        </li>
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="card card-antique p-5 text-center border-secondary border-opacity-25">
+            <div class="py-5">
+                <i class="bi bi-receipt-cutoff text-white-50" style="font-size: 4rem;"></i>
+                <h4 class="brand-font text-warning mt-3 mb-2">No Matching Orders Found</h4>
+                <p class="text-white-50 mx-auto mb-4" style="max-width: 480px;">
+                    No orders match your current filter parameters or search criteria.
+                </p>
+                <a href="{% url 'orders:admin_orders' %}" class="btn btn-antique-gold px-4 py-2">
+                    <i class="bi bi-arrow-repeat me-1"></i> Reset All Filters
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

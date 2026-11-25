@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Location Master Form — Admin | Antique Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card card-antique shadow-lg border-0">
+                <div class="card-antique-header text-center py-4">
+                    <span class="badge bg-danger mb-2 px-3 py-1 text-uppercase fw-bold">
+                        <i class="bi bi-pin-map-fill me-1"></i> Location Master Registry
+                    </span>
+                    <h3 class="font-serif mb-1">{{ action_title }}</h3>
+                    <p class="text-muted small mb-0">Select parent District and enter the location name</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small mb-4">
+                            {% for error in form.non_field_errors %}
+                                <div><i class="bi bi-exclamation-octagon-fill me-1"></i> {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate id="locationForm">
+                        {% csrf_token %}
+
+                        <!-- State Helper to filter District -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted">
+                                <i class="bi bi-filter me-1 text-warning"></i> State (Helper Filter)
+                            </label>
+                            {{ form.state }}
+                            <div class="form-text small text-muted">Filter districts by choosing a state.</div>
+                        </div>
+
+                        <!-- District Selection -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Parent District *</label>
+                            {{ form.district }}
+                            {% if form.district.errors %}
+                                <div class="text-danger small mt-1">{{ form.district.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Location Name -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small">Location / Locality / Ward Name *</label>
+                            {{ form.locname }}
+                            {% if form.locname.errors %}
+                                <div class="text-danger small mt-1">{{ form.locname.errors|first }}</div>
+                            {% endif %}
+                            <div class="form-text small text-muted">Example: Fort Kochi, Mattancherry Jew Town, Hawa Mahal Quarter.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a href="{% url 'locations:location_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-antique-gold px-4" id="saveLocationBtn">
+                                <i class="bi bi-check2-circle me-1"></i> Save Location
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const stateFilter = document.getElementById('id_state_filter');
+    const districtSelect = document.getElementById('id_district');
+
+    if (stateFilter && districtSelect) {
+        stateFilter.addEventListener('change', function () {
+            const stateId = this.value;
+            if (!stateId) return;
+
+            districtSelect.innerHTML = '<option value="">-- Loading Districts... --</option>';
+
+            fetch(`/locations/ajax/load-districts/?state_id=${encodeURIComponent(stateId)}`)
+                .then(res => res.json())
+                .then(data => {
+                    districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+                    if (data.districts && data.districts.length > 0) {
+                        data.districts.forEach(d => {
+                            const opt = document.createElement('option');
+                            opt.value = d.distid;
+                            opt.textContent = d.dist;
+                            districtSelect.appendChild(opt);
+                        });
+                    }
+                })
+                .catch(err => console.error('Error loading districts:', err));
+        });
+    }
+});
+</script>
+{% endblock %}

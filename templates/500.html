@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}500 — Exhibit Under Restoration | Antique Hub{% endblock %}
+{% block meta_description %}Our master curators encountered an unexpected technical flaw while preparing this heritage exhibit. Restoration is underway.{% endblock %}
+
+{% block content %}
+<div class="container py-5 my-md-4 page-min-height pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 text-center">
+            <div class="card card-antique-dark card-filigree border-warning border-opacity-25 shadow-lg p-4 p-md-5 position-relative overflow-hidden">
+                <!-- Background Antique Watermark Icon -->
+                <div class="position-absolute start-50 top-50 translate-middle opacity-5 pointer-events-none" style="z-index: 0;">
+                    <i class="bi bi-hourglass-split" style="font-size: 24rem; color: var(--antique-gold);"></i>
+                </div>
+
+                <div class="position-relative" style="z-index: 1;">
+                    <!-- Celestial Astrolabe Orrery Centerpiece Animation -->
+                    <div class="astrolabe-showcase">
+                        <div class="astrolabe-ambient-glow"></div>
+                        <div class="astrolabe-ring-outer"></div>
+                        <div class="astrolabe-ring-mid"></div>
+                        <div class="astrolabe-core">
+                            <i class="bi bi-tools text-accent-gold"></i>
+                        </div>
+                    </div>
+
+                    <!-- Curatorial Live Status Badge -->
+                    <div class="mb-3">
+                        <span class="badge-curator-seal">
+                            <span class="status-pulse-dot dot-emerald me-1"></span>
+                            HTTP 500 &bull; ACTIVE CURATORIAL CONSERVATION
+                        </span>
+                    </div>
+
+                    <!-- Editorial Headline with Gold Gradient -->
+                    <h1 class="brand-font display-5 fw-bold mb-3 text-gradient-gold">Exhibit Under Restoration</h1>
+
+                    <p class="text-white-50 lead fs-6 mb-4" style="max-width: 580px; margin: 0 auto; line-height: 1.78;">
+                        Our master conservators encountered an unexpected technical flaw while cataloging this heritage exhibit. Rest assured, all collection ledgers and escrow securities remain fully protected.
+                    </p>
+
+                    <!-- Search Input to Recover Navigation -->
+                    <div class="card bg-dark bg-opacity-75 border-secondary border-opacity-25 p-3 mb-3 rounded-3 text-start mx-auto" style="max-width: 520px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);">
+                        <label for="error500Search" class="form-label small text-warning fw-bold text-uppercase mb-2 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-compass me-1"></i> Continue Exploring Verified Antiques</span>
+                            <span class="badge bg-secondary bg-opacity-25 text-white-50 font-monospace" style="font-size: 0.65rem;">Catalogue Index</span>
+                        </label>
+                        <form method="get" action="{% url 'catalog:item_list' %}">
+                            <div class="input-group">
+                                <input type="text" name="q" id="error500Search" class="form-control bg-dark text-white border-secondary border-opacity-50" placeholder="Search centuries, bronze, coins, furniture...">
+                                <button type="submit" class="btn btn-antique-gold px-4">
+                                    <i class="bi bi-search me-1"></i> Explore
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Quick Discovery Chips -->
+                    <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap mb-4 small text-white-50">
+                        <span class="small text-uppercase letter-spacing-1 text-accent-gold" style="font-size: 0.72rem;">Browse:</span>
+                        <a href="{% url 'catalog:item_list' %}?q=Chola" class="badge bg-white bg-opacity-10 text-white border border-secondary border-opacity-50 text-decoration-none px-2 py-1 rounded-pill hover-gold">Chola Bronzes</a>
+                        <a href="{% url 'catalog:item_list' %}?q=Coins" class="badge bg-white bg-opacity-10 text-white border border-secondary border-opacity-50 text-decoration-none px-2 py-1 rounded-pill hover-gold">Imperial Coins</a>
+                        <a href="{% url 'catalog:item_list' %}?q=Sword" class="badge bg-white bg-opacity-10 text-white border border-secondary border-opacity-50 text-decoration-none px-2 py-1 rounded-pill hover-gold">Royal Armour</a>
+                        <a href="{% url 'inventory:discount_search' %}" class="badge bg-danger bg-opacity-25 text-white border border-danger border-opacity-50 text-decoration-none px-2 py-1 rounded-pill hover-gold">🏷️ Curated Offers</a>
+                    </div>
+
+                    <!-- Primary Action Buttons -->
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <button type="button" onclick="window.location.reload();" class="btn btn-antique-gold px-4 py-2 fw-bold shadow">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Reload Exhibit
+                        </button>
+                        <a href="{% url 'catalog:item_list' %}" class="btn btn-antique-dark px-4 py-2 shadow-sm">
+                            <i class="bi bi-grid-3x3-gap-fill me-1"></i> Explore Marketplace
+                        </a>
+                        <a href="{% url 'accounts:home' %}" class="btn btn-antique-outline px-4 py-2">
+                            <i class="bi bi-house-door me-1"></i> Return Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

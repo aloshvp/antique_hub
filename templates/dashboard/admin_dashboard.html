@@ -1,0 +1,535 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+{% block meta_description %}Antique Hub Executive Administration Console featuring real-time commerce KPIs, Chart.js sales analytics, pending seller verifications, and audit reports.{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js 4.x CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="container-fluid px-lg-4 mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Admin Dashboard</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-2 page-min-height pb-5">
+
+    <div class="row g-4 align-items-start">
+        <!-- Sidebar Navigation Column -->
+        <div class="col-lg-3 col-md-4">
+            {% include 'dashboard/admin_sidebar.html' %}
+        </div>
+
+        <!-- Main Dashboard Column -->
+        <div class="col-lg-9 col-md-8 admin-content-min-height">
+            <!-- Header Banner -->
+            <div class="card card-antique p-4 mb-4 border-warning border-opacity-25 shadow-sm position-relative overflow-hidden">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-1 mb-2">
+                            <i class="bi bi-shield-lock-fill me-1"></i> EXECUTIVE PLATFORM ADMINISTRATION
+                        </span>
+                        <h2 class="brand-font text-white mb-1">Administrative Control Center</h2>
+                        <p class="text-white-50 small mb-0">
+                            Real-time platform commerce KPIs, inventory audits, seller onboarding, and revenue analytics.
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'dashboard:admin_users' %}" class="btn btn-outline-warning btn-sm px-3 fw-bold shadow-sm" id="btnManageUsersQuick">
+                            <i class="bi bi-people me-1"></i> Manage Users
+                        </a>
+                        <a href="{% url 'dashboard:admin_reports_hub' %}" class="btn btn-antique-gold btn-sm px-3 fw-bold shadow-sm" id="btnReportsHubQuick">
+                            <i class="bi bi-file-earmark-bar-graph me-1"></i> Audit Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary 6 KPI Cards -->
+            <div class="row g-3 mb-4">
+                <!-- 1. Total Users -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-3 h-100 shadow-sm transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem;">Total Users</span>
+                            <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-circle fs-5">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                        </div>
+                        <div class="fs-3 fw-bold text-white font-monospace mb-1" id="kpiTotalUsers">{{ total_users }}</div>
+                        <div class="small text-white-50" style="font-size: 0.72rem;">
+                            <a href="{% url 'dashboard:admin_users' %}" class="text-warning text-decoration-none">View directory &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Total Sellers -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-3 h-100 shadow-sm transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem;">Sellers</span>
+                            <div class="bg-info bg-opacity-10 text-info p-2 rounded-circle fs-5">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                        </div>
+                        <div class="fs-3 fw-bold text-info font-monospace mb-1" id="kpiTotalSellers">{{ total_sellers }}</div>
+                        <div class="small text-white-50" style="font-size: 0.72rem;">
+                            {% if pending_sellers_count > 0 %}
+                                <span class="badge bg-danger">{{ pending_sellers_count }} Pending</span>
+                            {% else %}
+                                <span class="text-success"><i class="bi bi-check-circle me-1"></i>All Active</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Total Buyers -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-3 h-100 shadow-sm transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem;">Buyers</span>
+                            <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-circle fs-5">
+                                <i class="bi bi-person-heart"></i>
+                            </div>
+                        </div>
+                        <div class="fs-3 fw-bold text-warning font-monospace mb-1" id="kpiTotalBuyers">{{ total_buyers }}</div>
+                        <div class="small text-white-50" style="font-size: 0.72rem;">Registered Collectors</div>
+                    </div>
+                </div>
+
+                <!-- 4. Total Items -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-3 h-100 shadow-sm transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem;">Artifacts</span>
+                            <div class="bg-danger bg-opacity-10 text-danger p-2 rounded-circle fs-5">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                        </div>
+                        <div class="fs-3 fw-bold text-white font-monospace mb-1" id="kpiTotalItems">{{ total_items }}</div>
+                        <div class="small text-white-50" style="font-size: 0.72rem;">
+                            <a href="{% url 'catalog:admin_items' %}" class="text-warning text-decoration-none">Manage catalog &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Total Orders -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card card-antique border-secondary border-opacity-25 p-3 h-100 shadow-sm transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem;">Total Orders</span>
+                            <div class="bg-secondary bg-opacity-25 text-white p-2 rounded-circle fs-5">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                        </div>
+                        <div class="fs-3 fw-bold text-white font-monospace mb-1" id="kpiTotalOrders">{{ total_orders }}</div>
+                        <div class="small text-white-50" style="font-size: 0.72rem;">
+                            <a href="{% url 'orders:admin_orders' %}" class="text-warning text-decoration-none">Orders ledger &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Total Revenue -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card card-antique border-success border-opacity-50 p-3 h-100 shadow-sm transition-hover">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem;">Total Revenue</span>
+                            <div class="bg-success bg-opacity-10 text-success p-2 rounded-circle fs-5">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                        </div>
+                        <div class="fs-4 fw-bold text-success font-monospace mb-1" id="kpiTotalRevenue">₹{{ total_revenue|floatformat:0 }}</div>
+                        <div class="small text-success" style="font-size: 0.72rem;">Settled Net Sales</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Health Indicator Strip -->
+            <div class="row g-2 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="bg-dark bg-opacity-75 p-2 rounded-3 border border-secondary border-opacity-25 d-flex align-items-center justify-content-between px-3">
+                        <span class="small text-white-50"><i class="bi bi-person-exclamation text-danger me-1"></i> Pending Sellers:</span>
+                        <strong class="font-monospace {% if pending_sellers_count > 0 %}text-danger{% else %}text-success{% endif %}">{{ pending_sellers_count }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="bg-dark bg-opacity-75 p-2 rounded-3 border border-secondary border-opacity-25 d-flex align-items-center justify-content-between px-3">
+                        <span class="small text-white-50"><i class="bi bi-stack text-warning me-1"></i> Low Stock Items:</span>
+                        <strong class="font-monospace {% if low_stock_count > 0 %}text-warning{% else %}text-success{% endif %}">{{ low_stock_count }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="bg-dark bg-opacity-75 p-2 rounded-3 border border-secondary border-opacity-25 d-flex align-items-center justify-content-between px-3">
+                        <span class="small text-white-50"><i class="bi bi-percent text-info me-1"></i> Active Discounts:</span>
+                        <strong class="font-monospace text-info">{{ active_discounts_count }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="bg-dark bg-opacity-75 p-2 rounded-3 border border-secondary border-opacity-25 d-flex align-items-center justify-content-between px-3">
+                        <span class="small text-white-50"><i class="bi bi-chat-dots text-primary me-1"></i> Collector Reviews:</span>
+                        <strong class="font-monospace text-primary">{{ total_comments_count }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section (2 Columns) -->
+            <div class="row g-4 mb-4">
+                <!-- Chart 1: Sales by Month -->
+                <div class="col-lg-7">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="brand-font text-white mb-0">Sales &amp; Revenue Trends</h5>
+                                <small class="text-white-50">Monthly gross turnover and orders placed (last 6 months)</small>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 font-monospace">
+                                Revenue (₹)
+                            </span>
+                        </div>
+                        <div style="height: 270px; position: relative;">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Items by Category -->
+                <div class="col-lg-5">
+                    <div class="card card-antique border-secondary border-opacity-25 p-4 h-100 shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="brand-font text-white mb-0">Inventory by Category</h5>
+                                <small class="text-white-50">Catalog proportion across antique categories</small>
+                            </div>
+                            <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-50 font-monospace">
+                                Artifacts
+                            </span>
+                        </div>
+                        <div style="height: 270px; position: relative;" class="d-flex align-items-center justify-content-center">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Sellers List (Inline Activation Queue) -->
+            <div class="card card-antique border-secondary border-opacity-25 p-4 mb-4 shadow-sm" id="pendingSellersSection">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-danger rounded-circle p-2">
+                            <i class="bi bi-person-exclamation text-white"></i>
+                        </span>
+                        <div>
+                            <h5 class="brand-font text-white mb-0">Pending Seller Approvals</h5>
+                            <small class="text-white-50">Sellers awaiting administrative onboarding verification (Dealer Accreditation Workflow)</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'accounts:admin_seller_list' %}" class="btn btn-sm btn-outline-secondary">
+                        View All Sellers &rarr;
+                    </a>
+                </div>
+
+                {% if pending_sellers %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-warning small text-uppercase font-monospace border-secondary border-opacity-50">
+                                    <th>Business / Contact Name</th>
+                                    <th>Username</th>
+                                    <th>Location</th>
+                                    <th>Phone / Email</th>
+                                    <th>Applied Date</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for s in pending_sellers %}
+                                    <tr class="border-secondary border-opacity-25">
+                                        <td>
+                                            <div class="fw-bold text-white">{{ s.contactname }}</div>
+                                            <small class="text-white-50">{{ s.address|truncatewords:4 }}</small>
+                                        </td>
+                                        <td>
+                                            <code class="text-warning">@{{ s.username }}</code>
+                                        </td>
+                                        <td>
+                                            {% if s.district %}
+                                                {{ s.district.dist }}, {{ s.state.state }}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="small">{{ s.phone }}</div>
+                                            <small class="text-white-50">{{ s.email }}</small>
+                                        </td>
+                                        <td>
+                                            <small class="font-monospace text-white-50">{{ s.login.date_joined|date:"d M Y" }}</small>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-inline-flex gap-1">
+                                                <a href="{% url 'dashboard:admin_seller_activate' s.userid %}" 
+                                                   class="btn btn-sm btn-success px-2 py-1 fw-bold shadow-sm"
+                                                   title="Approve & Activate Seller"
+                                                   id="btnActivateSeller_{{ s.userid }}">
+                                                    <i class="bi bi-check-lg me-1"></i> Activate
+                                                </a>
+                                                <a href="{% url 'dashboard:admin_seller_deactivate' s.userid %}" 
+                                                   class="btn btn-sm btn-outline-danger px-2 py-1"
+                                                   title="Deactivate / Reject Seller"
+                                                   onclick="return confirm('Deactivate this seller account?');"
+                                                   id="btnDeactivateSeller_{{ s.userid }}">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success bg-dark bg-opacity-50 border-success border-opacity-25 text-white mb-0 py-3 d-flex align-items-center gap-3">
+                        <i class="bi bi-shield-check text-success fs-3"></i>
+                        <div>
+                            <strong>All Seller Accounts are Verified!</strong>
+                            <div class="text-white-50 small">There are currently no new antique seller accounts awaiting onboarding activation.</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Recent Orders Activity -->
+            <div class="card card-antique border-secondary border-opacity-25 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="brand-font text-white mb-0">Recent Customer Purchases</h5>
+                    <a href="{% url 'orders:admin_orders' %}" class="btn btn-sm btn-outline-warning">
+                        Master Orders Console &rarr;
+                    </a>
+                </div>
+
+                {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-warning small text-uppercase font-monospace border-secondary border-opacity-50">
+                                    <th>Order #</th>
+                                    <th>Buyer</th>
+                                    <th>Ordered Relics</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th class="text-end">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in recent_orders %}
+                                    <tr class="border-secondary border-opacity-25">
+                                        <td>
+                                            <span class="badge bg-secondary font-monospace">#{{ o.purchaseid }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-white">{{ o.buyer.username }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="small text-white-50 text-truncate" style="max-width: 250px;">
+                                                {% for p in o.order_items.all|slice:":2" %}
+                                                    {{ p.quantity }}x {{ p.item.title }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                                {% if o.order_items.count > 2 %}... (+{{ o.order_items.count|add:"-2" }} more){% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong class="text-success font-monospace">₹{{ o.tot_amt }}</strong>
+                                        </td>
+                                        <td>
+                                            {% if o.status == 'Delivered' %}
+                                                <span class="badge bg-success">Delivered</span>
+                                            {% elif o.status == 'Shipped' %}
+                                                <span class="badge bg-info text-dark">Shipped</span>
+                                            {% elif o.status == 'Cancelled' %}
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">{{ o.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if o.pay_status == 'Paid' %}
+                                                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50">Paid</span>
+                                            {% else %}
+                                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50">{{ o.pay_status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{% url 'orders:order_detail' o.purchaseid %}" class="btn btn-sm btn-outline-secondary py-0 px-2">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-white-50 text-center py-4">No recent orders recorded yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Initialization -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Sales & Revenue Trends Chart
+    const salesCtx = document.getElementById('salesChart');
+    if (salesCtx) {
+        const months = {{ chart_months_json|safe }};
+        const revenue = {{ chart_revenue_json|safe }};
+        const orders = {{ chart_orders_json|safe }};
+
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Gross Revenue (₹)',
+                        data: revenue,
+                        borderColor: '#2e7d32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.15)',
+                        fill: true,
+                        tension: 0.35,
+                        yAxisID: 'yRev',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#d4af37',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 4,
+                    },
+                    {
+                        label: 'Order Count',
+                        data: orders,
+                        borderColor: '#ffc107',
+                        backgroundColor: 'rgba(255, 193, 7, 0.4)',
+                        type: 'bar',
+                        yAxisID: 'yOrders',
+                        borderRadius: 4,
+                        barThickness: 18,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e0e0e0',
+                            font: { family: 'inherit', size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1b1411',
+                        titleColor: '#d4af37',
+                        bodyColor: '#ffffff',
+                        borderColor: '#d4af37',
+                        borderWidth: 1,
+                        padding: 10,
+                        callbacks: {
+                            label: function(context) {
+                                if (context.dataset.yAxisID === 'yRev') {
+                                    return 'Revenue: ₹' + context.raw.toLocaleString('en-IN');
+                                }
+                                return 'Orders: ' + context.raw;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#a0a0a0', font: { size: 10 } }
+                    },
+                    yRev: {
+                        type: 'linear',
+                        position: 'left',
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: {
+                            color: '#81c784',
+                            font: { size: 10 },
+                            callback: function(value) { return '₹' + value.toLocaleString('en-IN'); }
+                        }
+                    },
+                    yOrders: {
+                        type: 'linear',
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#ffd54f', font: { size: 10 }, stepSize: 1 }
+                    }
+                }
+            }
+        });
+    }
+
+    // 2. Items by Category Doughnut Chart
+    const catCtx = document.getElementById('categoryChart');
+    if (catCtx) {
+        const catLabels = {{ chart_cat_labels_json|safe }};
+        const catCounts = {{ chart_cat_counts_json|safe }};
+
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catCounts,
+                    backgroundColor: [
+                        '#d4af37', '#b8860b', '#8b5a2b', '#cd853f',
+                        '#2e7d32', '#00796b', '#c2185b', '#455a64'
+                    ],
+                    borderColor: '#1f1513',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#e0e0e0',
+                            font: { size: 10 },
+                            boxWidth: 12,
+                            padding: 8
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1b1411',
+                        titleColor: '#d4af37',
+                        borderColor: '#d4af37',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                                return `${context.label}: ${context.raw} items (${pct}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

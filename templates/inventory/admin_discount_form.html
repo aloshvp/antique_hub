@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} | Antique Hub{% endblock %}
+{% block meta_description %}Administrator form for creating and scheduling promotional discounts for antique categories or platform-wide sales.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'accounts:role_redirect' %}">Admin Console</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inventory:admin_discounts' %}">Promotional Discounts</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% if is_edit %}Edit Discount #{{ discount.discountid }}{% else %}Add Discount of Items{% endif %}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-antique border-secondary border-opacity-25 shadow-lg">
+                <!-- Header -->
+                <div class="card-antique-header p-4 border-bottom border-secondary border-opacity-25 bg-dark bg-opacity-50">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-3">
+                            <i class="bi bi-tag-fill"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning text-dark font-monospace fw-bold mb-1">
+                                PROMOTIONAL DISCOUNT CONFIGURATION
+                            </span>
+                            <h3 class="brand-font text-white mb-1">
+                                {% if is_edit %}Edit Discount Campaign #{{ discount.discountid }}{% else %}Add Discount of Items{% endif %}
+                            </h3>
+                            <p class="text-white-50 small mb-0">
+                                Configure category-specific or platform-wide markdowns. Expired campaigns stop applying automatically.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- Rule Notice -->
+                    <div class="alert alert-info bg-dark bg-opacity-75 border-info border-opacity-50 text-white small mb-4">
+                        <div class="d-flex gap-2">
+                            <i class="bi bi-shield-check text-info fs-5 mt-n1"></i>
+                            <div>
+                                <strong>Promotional Rules &amp; Price Integrity:</strong>
+                                <ul class="mb-0 ps-3 mt-1 text-white-50">
+                                    <li>Leaving <strong>Applicable Category</strong> blank creates a <strong>Storewide Discount</strong> for all items.</li>
+                                    <li>Discount percentage must be strictly between <strong>1% and 90%</strong>.</li>
+                                    <li>The <strong>End Date</strong> must be strictly after the <strong>Start Date</strong>.</li>
+                                    <li>Effective prices are calculated universally across listings, cart, and checkout via <code>get_effective_price()</code>.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" novalidate id="discountForm">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small mb-4">
+                                {% for err in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i> {{ err }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Applicable Category -->
+                        <div class="mb-4">
+                            <label for="{{ form.applicable_cat.id_for_label }}" class="form-label text-warning small text-uppercase fw-bold">
+                                {{ form.applicable_cat.label }}
+                            </label>
+                            {{ form.applicable_cat }}
+                            {% if form.applicable_cat.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>{{ form.applicable_cat.errors|first }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text text-white-50 small">
+                                {{ form.applicable_cat.help_text }}
+                            </div>
+                        </div>
+
+                        <!-- Discount Percentage -->
+                        <div class="mb-4">
+                            <label for="{{ form.discount_percent.id_for_label }}" class="form-label text-warning small text-uppercase fw-bold">
+                                {{ form.discount_percent.label }} <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                {{ form.discount_percent }}
+                                <span class="input-group-text bg-dark text-warning border-secondary border-opacity-50 fw-bold">% OFF</span>
+                            </div>
+                            {% if form.discount_percent.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>{{ form.discount_percent.errors|first }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text text-white-50 small">
+                                {{ form.discount_percent.help_text }}
+                            </div>
+                        </div>
+
+                        <!-- Date Range (Start & End) -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.startdate.id_for_label }}" class="form-label text-warning small text-uppercase fw-bold">
+                                    {{ form.startdate.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.startdate }}
+                                {% if form.startdate.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>{{ form.startdate.errors|first }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text text-white-50 small">
+                                    {{ form.startdate.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.enddate.id_for_label }}" class="form-label text-warning small text-uppercase fw-bold">
+                                    {{ form.enddate.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.enddate }}
+                                {% if form.enddate.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>{{ form.enddate.errors|first }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text text-white-50 small">
+                                    {{ form.enddate.help_text }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Summary / Interactive Preview Card -->
+                        <div class="card bg-dark bg-opacity-75 border-secondary border-opacity-50 p-3 rounded-3 mb-4" id="livePreviewCard">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-warning small text-uppercase fw-bold">
+                                    <i class="bi bi-broadcast me-1"></i> Campaign Live Preview
+                                </span>
+                                <span class="badge bg-success" id="previewBadge">Active Ready</span>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <h4 class="text-success brand-font mb-0" id="previewPercent">15% OFF</h4>
+                                <span class="text-white" id="previewScope">on All Antique Categories</span>
+                            </div>
+                            <div class="text-white-50 small mt-1" id="previewDates">
+                                Duration: <span id="previewStart">Start</span> to <span id="previewEnd">End</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-25">
+                            <a href="{% url 'inventory:admin_discounts' %}" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-antique-gold px-4 py-2 fw-bold shadow-sm" id="btnSubmitDiscount">
+                                <i class="bi bi-check-circle me-1"></i>
+                                {% if is_edit %}Update Discount Campaign{% else %}Create Discount Campaign{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const catSelect = document.getElementById('id_applicable_cat');
+    const percentInput = document.getElementById('id_discount_percent');
+    const startDateInput = document.getElementById('id_startdate');
+    const endDateInput = document.getElementById('id_enddate');
+
+    const previewPercent = document.getElementById('previewPercent');
+    const previewScope = document.getElementById('previewScope');
+    const previewStart = document.getElementById('previewStart');
+    const previewEnd = document.getElementById('previewEnd');
+    const previewBadge = document.getElementById('previewBadge');
+
+    function updatePreview() {
+        const percent = percentInput ? percentInput.value : '';
+        previewPercent.textContent = percent ? (percent + '% OFF') : '--% OFF';
+
+        if (catSelect && catSelect.selectedIndex > 0) {
+            const selectedText = catSelect.options[catSelect.selectedIndex].text;
+            previewScope.textContent = 'on ' + selectedText;
+        } else {
+            previewScope.textContent = 'on All Antique Categories (Storewide)';
+        }
+
+        const startVal = startDateInput ? startDateInput.value : '';
+        const endVal = endDateInput ? endDateInput.value : '';
+        previewStart.textContent = startVal || 'Start Date';
+        previewEnd.textContent = endVal || 'End Date';
+
+        if (startVal && endVal) {
+            const s = new Date(startVal);
+            const e = new Date(endVal);
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+
+            if (e <= s) {
+                previewBadge.className = 'badge bg-danger';
+                previewBadge.textContent = 'Invalid: End <= Start';
+            } else if (now < s) {
+                previewBadge.className = 'badge bg-info text-dark';
+                previewBadge.textContent = 'Upcoming Scheduled';
+            } else if (now > e) {
+                previewBadge.className = 'badge bg-secondary';
+                previewBadge.textContent = 'Past / Expired';
+            } else {
+                previewBadge.className = 'badge bg-success';
+                previewBadge.textContent = 'Active Campaign';
+            }
+        }
+    }
+
+    if (catSelect) catSelect.addEventListener('change', updatePreview);
+    if (percentInput) percentInput.addEventListener('input', updatePreview);
+    if (startDateInput) startDateInput.addEventListener('change', updatePreview);
+    if (endDateInput) endDateInput.addEventListener('change', updatePreview);
+
+    updatePreview();
+});
+</script>
+{% endblock %}

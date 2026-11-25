@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Frequently Asked Questions | Antique Hub{% endblock %}
+{% block meta_description %}Explore verified answers on antique authenticity, provenance verification, museum-grade shipping, returns policy, secure payments, and seller dealer onboarding.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalog:item_list' %}">Marketplace</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Knowledgebase &amp; FAQs</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+
+    <!-- Header Hero Banner -->
+    <div class="card card-antique p-4 p-md-5 mb-4 border-secondary border-opacity-25 shadow-sm">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-2 mb-2">
+                    <i class="bi bi-patch-question-fill me-1 text-danger"></i> HERITAGE CURATION &amp; MARKETPLACE HELP
+                </span>
+                <h1 class="brand-font text-warning display-6 mb-2">Frequently Asked Questions</h1>
+                <p class="text-white-50 mb-0 leading-relaxed">
+                    Clear, authoritative guidance on provenance authentication, museum-grade shipping, buyer protection, payment gateways, and dealer onboarding.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if user.is_authenticated and user.is_staff or user.is_superuser %}
+                    <a href="{% url 'community:admin_faq_list' %}" class="btn btn-sm btn-antique-gold">
+                        <i class="bi bi-gear-fill me-1"></i> Admin FAQ Console
+                    </a>
+                {% else %}
+                    <div class="d-inline-flex align-items-center gap-2 p-2 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 text-white-50 small">
+                        <i class="bi bi-shield-check text-warning fs-5"></i>
+                        <span>100% Curated &amp; Verified Policy</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Integrated Search Bar -->
+        <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+            <form method="get" action="{% url 'community:faq_view' %}" class="row g-2 justify-content-center" id="faqSearchForm">
+                <div class="col-md-9 col-sm-8">
+                    <div class="input-group input-group-lg shadow-sm">
+                        <span class="input-group-text bg-dark border-secondary text-warning">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control form-control-antique bg-dark text-white border-secondary"
+                               placeholder="Search answers (e.g., authenticity, shipping, returns, payment, seller)..."
+                               value="{{ search_query }}" id="faqSearchInput" autocomplete="off">
+                        {% if search_query %}
+                            <a href="{% url 'community:faq_view' %}" class="btn btn-outline-secondary" title="Clear Search">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-4">
+                    <button type="submit" class="btn btn-antique-gold btn-lg w-100 shadow-sm fw-bold">
+                        <i class="bi bi-search me-1"></i> Search FAQs
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick Filter Chips -->
+            <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
+                <span class="text-white-50 small me-1">Popular Topics:</span>
+                <a href="{% url 'community:faq_view' %}?q=authenticity" class="badge rounded-pill bg-dark border border-secondary text-white text-decoration-none px-3 py-2 hover-warning">
+                    <i class="bi bi-patch-check text-warning me-1"></i> Authenticity
+                </a>
+                <a href="{% url 'community:faq_view' %}?q=shipping" class="badge rounded-pill bg-dark border border-secondary text-white text-decoration-none px-3 py-2 hover-warning">
+                    <i class="bi bi-truck text-warning me-1"></i> Shipping &amp; Crating
+                </a>
+                <a href="{% url 'community:faq_view' %}?q=return" class="badge rounded-pill bg-dark border border-secondary text-white text-decoration-none px-3 py-2 hover-warning">
+                    <i class="bi bi-arrow-return-left text-warning me-1"></i> Returns &amp; Claims
+                </a>
+                <a href="{% url 'community:faq_view' %}?q=payment" class="badge rounded-pill bg-dark border border-secondary text-white text-decoration-none px-3 py-2 hover-warning">
+                    <i class="bi bi-credit-card text-warning me-1"></i> Payment Security
+                </a>
+                <a href="{% url 'community:faq_view' %}?q=seller" class="badge rounded-pill bg-dark border border-secondary text-white text-decoration-none px-3 py-2 hover-warning">
+                    <i class="bi bi-shop text-warning me-1"></i> Dealer Onboarding
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Status Counter -->
+    <div class="d-flex justify-content-between align-items-center mb-3 text-white-50 small">
+        <div>
+            {% if search_query %}
+                Found <strong>{{ faqs.count }}</strong> result{{ faqs.count|pluralize }} matching <span class="text-warning font-monospace">"{{ search_query }}"</span>
+            {% else %}
+                Showing all <strong>{{ faqs.count }}</strong> Knowledgebase Articles &amp; Guidelines
+            {% endif %}
+        </div>
+        {% if search_query %}
+            <a href="{% url 'community:faq_view' %}" class="text-warning text-decoration-none">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> View All FAQs
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Searchable Accordion -->
+    {% if faqs %}
+        <div class="accordion accordion-antique mb-5" id="faqAccordion">
+            {% for item in faqs %}
+                <div class="accordion-item bg-dark border border-secondary border-opacity-25 rounded-3 mb-3 overflow-hidden shadow-sm">
+                    <h2 class="accordion-header" id="heading_{{ item.faqid }}">
+                        <button class="accordion-button {% if not forloop.first and not search_query %}collapsed{% endif %} bg-dark text-white fw-bold py-3 px-4 d-flex align-items-center gap-3"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse_{{ item.faqid }}"
+                                aria-expanded="{% if forloop.first or search_query %}true{% else %}false{% endif %}"
+                                aria-controls="collapse_{{ item.faqid }}"
+                                id="faqBtn_{{ item.faqid }}">
+                            <span class="badge bg-warning bg-opacity-25 text-warning font-monospace px-2 py-1 fs-6">
+                                Q{{ forloop.counter }}
+                            </span>
+                            <span class="brand-font text-white flex-grow-1 fs-5">
+                                {{ item.faq }}
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="collapse_{{ item.faqid }}"
+                         class="accordion-collapse collapse {% if forloop.first or search_query %}show{% endif %}"
+                         aria-labelledby="heading_{{ item.faqid }}"
+                         data-bs-parent="#faqAccordion">
+                        <div class="accordion-body px-4 py-4 border-top border-secondary border-opacity-25 bg-black bg-opacity-25 text-white-50 leading-relaxed" style="font-size: 1.02rem; line-height: 1.8;">
+                            <div class="d-flex align-items-start gap-3">
+                                <i class="bi bi-check-circle-fill text-warning fs-4 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    {{ item.answer|linebreaksbr }}
+                                </div>
+                            </div>
+
+                            {% if user.is_authenticated and user.is_staff or user.is_superuser %}
+                                <div class="mt-3 pt-3 border-top border-secondary border-opacity-25 text-end">
+                                    <a href="{% url 'community:admin_faq_update' item.faqid %}" class="btn btn-sm btn-outline-warning me-2">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit FAQ
+                                    </a>
+                                    <a href="{% url 'community:admin_faq_delete' item.faqid %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash me-1"></i> Delete
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty Search State with Antique Illustration -->
+        <div class="empty-state-antique shadow-sm mb-5">
+            <div class="empty-state-icon-wrapper">
+                <i class="bi bi-patch-question"></i>
+            </div>
+            <h3 class="empty-state-title">No Matching FAQs Found</h3>
+            <p class="empty-state-desc">
+                We couldn't find any questions or answers matching <span class="font-monospace fw-bold">"{{ search_query }}"</span>. Try searching with different keywords like <em>shipping</em>, <em>returns</em>, or <em>authenticity</em>.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'community:faq_view' %}" class="btn btn-antique-gold px-4 py-2">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Search &amp; View All FAQs
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Support Assistance Banner -->
+    <div class="card card-antique p-4 border-secondary border-opacity-25 shadow-sm">
+        <div class="row align-items-center g-3">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <div>
+                        <h5 class="brand-font text-white mb-1">Still Have Inquiries Regarding an Artifact?</h5>
+                        <p class="text-white-50 small mb-0">
+                            Our team of heritage conservators, curators, and logistics specialists are here to assist collectors and dealers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'catalog:item_list' %}" class="btn btn-antique-gold px-4 py-2">
+                    <i class="bi bi-compass me-1"></i> Explore Marketplace
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

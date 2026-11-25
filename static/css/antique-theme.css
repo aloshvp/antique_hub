@@ -1,0 +1,2618 @@
+/* ==========================================================================
+   Antique Hub — Premier Curated Antique & Heritage Marketplace
+   Bespoke Human-Crafted Luxury Gallery Theme & Micro-Animation System
+   Palette: Midnight Obsidian, Radiant Imperial Gold, Alabaster Silk, Royal Emerald
+   ========================================================================== */
+
+:root {
+    /* Midnight Obsidian & Smoked Glass Palette */
+    --antique-obsidian: #0b0d13;
+    --antique-noir: #0f121a;
+    --antique-charcoal: #161b26;
+    --antique-slate: #1f2636;
+    --antique-border-dark: rgba(212, 175, 55, 0.26);
+    
+    /* Warm Alabaster & Silk Canvas */
+    --antique-cream: #faf7f2;
+    --antique-parchment: #f4ece0;
+    --antique-parchment-border: #dfd2be;
+    --antique-card-bg: #ffffff;
+    
+    /* Radiant Imperial Gold Accent System */
+    --antique-gold: #d4af37;
+    --antique-gold-hover: #e5c358;
+    --antique-gold-bright: #f5e4b8;
+    --antique-gold-deep: #a88120;
+    --antique-gold-glow: rgba(212, 175, 55, 0.42);
+    --antique-gold-subtle: rgba(212, 175, 55, 0.14);
+    
+    /* Royal Heritage Jewel Tones */
+    --antique-verdigris: #1d573d;
+    --antique-verdigris-light: #eaf5ef;
+    --antique-verdigris-border: #8bcba8;
+    --antique-crimson: #8a1c2e;
+    --antique-crimson-light: #fbebee;
+    --antique-crimson-border: #e29ca8;
+    --antique-amber: #c27a27;
+    --antique-amber-light: #fef5ea;
+    
+    /* Editorial Typography Colors */
+    --antique-text: #1d1916;
+    --antique-text-muted: #6b6054;
+    --antique-text-light: #948777;
+    
+    /* Luxury Multi-Stage Layered Shadows */
+    --antique-shadow-sm: 0 2px 10px rgba(11, 13, 19, 0.05);
+    --antique-shadow-md: 0 10px 30px -4px rgba(11, 13, 19, 0.08), 0 0 0 1px rgba(212, 175, 55, 0.18);
+    --antique-shadow-hover: 0 22px 48px -10px rgba(11, 13, 19, 0.16), 0 0 0 1px rgba(212, 175, 55, 0.45);
+    --antique-shadow-dark: 0 24px 50px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(212, 175, 55, 0.28);
+    
+    /* Timing & Easing Curves */
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Fonts */
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-brand: 'Cinzel', 'Playfair Display', Georgia, serif;
+    --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* ======================================================================
+       Bootstrap 5.3 CSS Variable Overrides
+       Harmonizes all standard Bootstrap components with luxury Antique theme
+       ====================================================================== */
+    --bs-primary: #0f121a;
+    --bs-primary-rgb: 15, 18, 26;
+    --bs-warning: #d4af37;
+    --bs-warning-rgb: 212, 175, 55;
+    --bs-warning-text-emphasis: #996515;
+    --bs-warning-bg-subtle: rgba(212, 175, 55, 0.16);
+    --bs-warning-border-subtle: rgba(212, 175, 55, 0.38);
+    --bs-success: #1d573d;
+    --bs-success-rgb: 29, 87, 61;
+    --bs-success-text-emphasis: #133a28;
+    --bs-success-bg-subtle: rgba(29, 87, 61, 0.12);
+    --bs-success-border-subtle: rgba(29, 87, 61, 0.3);
+    --bs-danger: #8a1c2e;
+    --bs-danger-rgb: 138, 28, 46;
+    --bs-danger-text-emphasis: #60101d;
+    --bs-danger-bg-subtle: rgba(138, 28, 46, 0.12);
+    --bs-danger-border-subtle: rgba(138, 28, 46, 0.3);
+    --bs-dark: #0b0d13;
+    --bs-dark-rgb: 11, 13, 19;
+    --bs-light: #faf7f2;
+    --bs-light-rgb: 250, 247, 242;
+    --bs-secondary-bg: #f4ece0;
+    --bs-body-bg: #faf7f2;
+    --bs-body-color: #1d1916;
+    --bs-link-color: #a88120;
+    --bs-link-hover-color: #d4af37;
+    --bs-border-color: rgba(212, 175, 55, 0.24);
+    --bs-border-radius: 12px;
+    --bs-border-radius-sm: 8px;
+    --bs-border-radius-lg: 16px;
+    --bs-border-radius-xl: 22px;
+
+    /* Bootstrap 5.3 Pagination Variable Overrides */
+    --bs-pagination-color: var(--antique-text);
+    --bs-pagination-bg: #ffffff;
+    --bs-pagination-border-color: rgba(212, 175, 55, 0.28);
+    --bs-pagination-hover-color: var(--antique-obsidian);
+    --bs-pagination-hover-bg: rgba(212, 175, 55, 0.12);
+    --bs-pagination-hover-border-color: var(--antique-gold);
+    --bs-pagination-focus-color: var(--antique-obsidian);
+    --bs-pagination-focus-bg: rgba(212, 175, 55, 0.16);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+    --bs-pagination-active-color: #0b0d13;
+    --bs-pagination-active-bg: #d4af37;
+    --bs-pagination-active-border-color: #d4af37;
+    --bs-pagination-disabled-color: var(--antique-text-light);
+    --bs-pagination-disabled-bg: rgba(244, 236, 224, 0.45);
+    --bs-pagination-disabled-border-color: rgba(212, 175, 55, 0.18);
+}
+
+/* ==========================================================================
+   Global Reset & Editorial Typography with Ambient Lighting
+   ========================================================================== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--antique-cream);
+    background-image: 
+        radial-gradient(at 15% 0%, rgba(212, 175, 55, 0.07) 0px, transparent 42%),
+        radial-gradient(at 85% 0%, rgba(29, 87, 61, 0.05) 0px, transparent 46%);
+    background-repeat: no-repeat;
+    background-size: 100% 900px;
+    color: var(--antique-text);
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    line-height: 1.68;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+    flex: 1 0 auto;
+    min-height: calc(100vh - 420px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom Luxury Scrollbar */
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+::-webkit-scrollbar-track {
+    background: var(--antique-noir);
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--antique-gold) 0%, var(--antique-gold-deep) 100%);
+    border-radius: 6px;
+    border: 2px solid var(--antique-noir);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--antique-gold-hover);
+}
+
+/* Headings & Brand Fonts */
+h1, h2, h3, h4, h5, h6, .font-serif {
+    font-family: var(--font-heading);
+    color: var(--antique-text);
+    letter-spacing: -0.015em;
+    font-weight: 700;
+}
+
+.brand-font {
+    font-family: var(--font-brand);
+    letter-spacing: 0.1em;
+}
+
+.letter-spacing-1 {
+    letter-spacing: 0.06em;
+}
+
+.letter-spacing-2 {
+    letter-spacing: 0.14em;
+}
+
+.text-accent-gold {
+    color: var(--antique-gold) !important;
+}
+
+.hover-gold:hover {
+    color: var(--antique-gold-hover) !important;
+}
+
+.text-gradient-gold {
+    background: linear-gradient(135deg, #ffffff 0%, #f6e6be 40%, #d4af37 80%, #ebd494 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Price Styling (Refined Dignified Antique Valuation) */
+.price-antique, .price-gold {
+    color: #9e7518 !important;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Bootstrap Component Overrides (Replacing generic colors with luxury tones)
+   ========================================================================== */
+.text-warning {
+    color: var(--antique-gold) !important;
+}
+
+.text-warning-emphasis {
+    color: var(--antique-gold-deep) !important;
+}
+
+.bg-warning {
+    background-color: var(--antique-gold) !important;
+    color: var(--antique-obsidian) !important;
+}
+
+.bg-warning-subtle {
+    background-color: rgba(212, 175, 55, 0.16) !important;
+    color: var(--antique-gold-deep) !important;
+}
+
+.border-warning {
+    border-color: rgba(212, 175, 55, 0.48) !important;
+}
+
+.text-success {
+    color: var(--antique-verdigris) !important;
+}
+
+.bg-success {
+    background-color: var(--antique-verdigris) !important;
+    color: #ffffff !important;
+}
+
+.bg-success-subtle {
+    background-color: rgba(29, 87, 61, 0.12) !important;
+    color: var(--antique-verdigris) !important;
+}
+
+.border-success {
+    border-color: rgba(29, 87, 61, 0.45) !important;
+}
+
+.text-danger {
+    color: var(--antique-crimson) !important;
+}
+
+.bg-danger {
+    background-color: var(--antique-crimson) !important;
+    color: #ffffff !important;
+}
+
+.bg-danger-subtle {
+    background-color: rgba(138, 28, 46, 0.12) !important;
+    color: var(--antique-crimson) !important;
+}
+
+.border-danger {
+    border-color: rgba(138, 28, 46, 0.45) !important;
+}
+
+.bg-dark {
+    background-color: var(--antique-obsidian) !important;
+}
+
+.border-secondary {
+    border-color: rgba(212, 175, 55, 0.24) !important;
+}
+
+/* ==========================================================================
+   Micro-Animations & Keyframes
+   ========================================================================== */
+@keyframes subtleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes goldShimmerSweep {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes badgePulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+    70% { box-shadow: 0 0 0 9px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.97) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-float {
+    animation: subtleFloat 4s ease-in-out infinite;
+}
+
+.animate-fade-in {
+    animation: fadeInScale 0.4s var(--ease-spring) forwards;
+}
+
+/* ==========================================================================
+   Top Announcement Bar & Curated Badges
+   ========================================================================== */
+.top-announcement-bar {
+    background: linear-gradient(90deg, #090b10 0%, #111520 50%, #090b10 100%);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25) !important;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    transition: background-color 0.3s ease;
+}
+
+.badge-curator-seal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.08) 100%);
+    color: #f7e6be;
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 20px;
+    padding: 0.24rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+    animation: badgePulse 3.5s infinite;
+}
+
+/* ==========================================================================
+   Navigation Bar (Glassmorphism & Brand Crest)
+   ========================================================================== */
+/* ==========================================================================
+   Top Curatorial Utility Bar (Micro-Header)
+   ========================================================================== */
+.top-announcement-bar,
+.top-curator-bar {
+    background: #07090e;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.22) !important;
+    border-top: 1.5px solid var(--antique-gold);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    position: relative;
+    z-index: 1035;
+}
+
+.topbar-link {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.topbar-link:hover {
+    color: var(--antique-gold-bright) !important;
+}
+
+.currency-chip {
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: var(--antique-gold-bright);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* ==========================================================================
+   Navigation Bar (Minimalist Luxury Gallery Aesthetic — Spacious & Clean)
+   ========================================================================== */
+.navbar-antique {
+    background: rgba(10, 13, 20, 0.94);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    padding: 1.05rem 0;
+    transition: padding 0.3s var(--ease-smooth), background 0.3s ease, border-color 0.3s ease;
+    z-index: 1030;
+}
+
+.navbar-antique.scrolled {
+    padding: 0.65rem 0;
+    background: rgba(7, 9, 14, 0.98);
+    border-bottom-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.7);
+}
+
+/* Brand Logo (Refined Heritage Seal & Wordmark) */
+.navbar-antique .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    padding: 0;
+    margin-right: 2.2rem;
+}
+
+.navbar-antique .navbar-brand:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.brand-crest-minimal {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.04) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.38);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--antique-gold);
+    font-size: 1.15rem;
+    transition: all 0.3s var(--ease-spring);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.18);
+}
+
+.navbar-antique .navbar-brand:hover .brand-crest-minimal {
+    border-color: var(--antique-gold);
+    color: var(--antique-gold-bright);
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
+    transform: scale(1.05);
+}
+
+.brand-text-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.brand-title-minimal {
+    font-family: var(--font-brand);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.14em;
+    line-height: 1;
+}
+
+.brand-subtitle-minimal {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--antique-gold);
+    margin-top: 3px;
+    opacity: 0.85;
+}
+
+/* Nav Links (Christie's / Sotheby's Clean Editorial Style) */
+.navbar-antique .navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-antique .nav-link {
+    color: rgba(255, 255, 255, 0.72) !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.65rem !important;
+    position: relative;
+    background: transparent !important;
+    transition: color 0.25s ease;
+}
+
+.navbar-antique .nav-link:hover {
+    color: var(--antique-gold-bright) !important;
+}
+
+.navbar-antique .nav-link.active {
+    color: #ffffff !important;
+}
+
+/* Elegant Minimal Underline for Nav Links */
+.navbar-antique .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--antique-gold), transparent);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--antique-gold);
+    transition: transform 0.25s var(--ease-spring);
+}
+
+.navbar-antique .nav-link:hover::after,
+.navbar-antique .nav-link.active::after {
+    transform: translateX(-50%) scaleX(1);
+}
+
+/* Role Console Dropdowns in Nav */
+.navbar-antique .nav-link.dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.navbar-antique .nav-link.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.25rem;
+    vertical-align: 0.15em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    box-shadow: none;
+    width: auto;
+    height: auto;
+    position: static;
+    transform: none;
+    background: none;
+}
+
+/* Nav Utility Action Bar */
+.nav-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.nav-divider-vr {
+    width: 1px;
+    height: 22px;
+    background: rgba(212, 175, 55, 0.22);
+    margin: 0 0.5rem;
+}
+
+/* Nav Utility Icon Buttons (Search, Watchlist, Cart) */
+.btn-nav-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.78) !important;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.98rem;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    position: relative;
+}
+
+.btn-nav-icon:hover {
+    color: var(--antique-gold-bright) !important;
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+    transform: translateY(-1px);
+}
+
+.badge-counter-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 10px;
+    background-color: var(--antique-crimson) !important;
+    color: #ffffff;
+    font-size: 0.64rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px rgba(138, 28, 46, 0.7);
+    border: 1.5px solid #0a0d14;
+}
+
+.nav-watchlist-count {
+    font-size: 0.64rem;
+    background-color: var(--antique-crimson) !important;
+    box-shadow: 0 2px 8px rgba(138, 28, 46, 0.6);
+}
+
+/* Guest Authentication Controls */
+.btn-nav-signin {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.9rem;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-nav-signin:hover {
+    color: var(--antique-gold-bright) !important;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.btn-nav-register {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.06) 100%);
+    border: 1px solid var(--antique-gold);
+    color: var(--antique-gold-bright) !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.42rem 1.1rem;
+    border-radius: 24px;
+    transition: all 0.25s var(--ease-spring);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-nav-register:hover {
+    background: linear-gradient(135deg, var(--antique-gold) 0%, var(--antique-gold-deep) 100%);
+    color: #0b0d13 !important;
+    border-color: var(--antique-gold-bright);
+    box-shadow: 0 4px 18px rgba(212, 175, 55, 0.5);
+    transform: translateY(-1px);
+}
+
+/* User Profile Trigger & Crest */
+.btn-nav-user {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 24px;
+    padding: 4px 12px 4px 5px;
+    transition: all 0.25s ease;
+    color: #ffffff !important;
+    font-size: 0.84rem;
+    font-weight: 500;
+}
+
+.btn-nav-user:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--antique-gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+}
+
+.user-avatar-crest {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--antique-gold) 0%, var(--antique-gold-deep) 100%);
+    color: #0b0d13;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.74rem;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+/* Luxury Dark Dropdown Menus */
+.navbar-antique .dropdown-menu,
+.dropdown-menu-dark-antique {
+    background: linear-gradient(165deg, #131722 0%, #0a0d14 100%) !important;
+    border: 1px solid rgba(212, 175, 55, 0.32) !important;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.85), 0 0 18px rgba(212, 175, 55, 0.15) !important;
+    border-radius: 12px;
+    padding: 0.6rem;
+    margin-top: 0.5rem;
+    min-width: 220px;
+    animation: fadeInScale 0.22s var(--ease-spring);
+}
+
+.navbar-antique .dropdown-header,
+.dropdown-menu-dark-antique .dropdown-header {
+    color: #ffffff;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+}
+
+.navbar-antique .dropdown-item,
+.dropdown-menu-dark-antique .dropdown-item {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 0.85rem;
+    border-radius: 6px;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-antique .dropdown-item:hover,
+.dropdown-menu-dark-antique .dropdown-item:hover {
+    background: rgba(212, 175, 55, 0.15) !important;
+    color: var(--antique-gold-bright) !important;
+    transform: translateX(4px);
+}
+
+.navbar-antique .dropdown-divider,
+.dropdown-menu-dark-antique .dropdown-divider {
+    border-color: rgba(212, 175, 55, 0.18) !important;
+    margin: 0.4rem 0;
+}
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 991.98px) {
+    .navbar-antique {
+        padding: 0.75rem 0;
+    }
+    .navbar-collapse {
+        background: rgba(10, 13, 20, 0.98);
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-top: 0.75rem;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+    }
+    .navbar-antique .nav-link {
+        padding: 0.65rem 0.5rem !important;
+        font-size: 0.9rem;
+    }
+    .nav-actions-group {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(212, 175, 55, 0.18);
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .nav-divider-vr {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Buttons (Brushed Radiant Gold, Obsidian, Outline)
+   ========================================================================== */
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.3s var(--ease-spring);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: scale(0.97) !important;
+}
+
+/* Primary Imperial Radiant Gold Button */
+.btn-antique-gold,
+.btn-warning:not(.btn-outline-warning) {
+    background: linear-gradient(135deg, #f2dc9b 0%, #d4af37 40%, #a87e1f 85%, #d4af37 100%) !important;
+    color: #0b0d13 !important;
+    font-weight: 700 !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 4px 18px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-antique-gold:hover,
+.btn-warning:not(.btn-outline-warning):hover {
+    background: linear-gradient(135deg, #f8e8b6 0%, #dfb746 45%, #b58824 85%, #e2be52 100%) !important;
+    box-shadow: 0 8px 28px rgba(212, 175, 55, 0.65), 0 0 16px rgba(212, 175, 55, 0.45);
+    transform: translateY(-2px);
+    color: #0b0d13 !important;
+}
+
+/* Dark Obsidian Button */
+.btn-antique-dark,
+.btn-primary:not(.btn-outline-primary) {
+    background: linear-gradient(135deg, var(--antique-charcoal) 0%, var(--antique-obsidian) 100%) !important;
+    color: var(--antique-gold-bright) !important;
+    border: 1px solid var(--antique-border-dark) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.btn-antique-dark:hover,
+.btn-primary:not(.btn-outline-primary):hover {
+    background: linear-gradient(135deg, var(--antique-slate) 0%, var(--antique-charcoal) 100%) !important;
+    border-color: var(--antique-gold) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 14px rgba(212, 175, 55, 0.2);
+}
+
+/* Outline Radiant Gold */
+.btn-antique-outline,
+.btn-outline-warning,
+.btn-outline-primary {
+    background: transparent !important;
+    color: var(--antique-gold) !important;
+    border: 1.5px solid var(--antique-gold) !important;
+}
+
+.btn-antique-outline:hover,
+.btn-outline-warning:hover,
+.btn-outline-primary:hover {
+    background: var(--antique-gold) !important;
+    color: #0b0d13 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(212, 175, 55, 0.45);
+}
+
+/* Danger / Crimson Buttons */
+.btn-outline-danger {
+    color: var(--antique-crimson) !important;
+    border-color: var(--antique-crimson) !important;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--antique-crimson) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(138, 28, 46, 0.4);
+}
+
+.btn-danger {
+    background-color: var(--antique-crimson) !important;
+    border-color: var(--antique-crimson) !important;
+}
+
+/* Success / Verdigris Buttons */
+.btn-outline-success {
+    color: var(--antique-verdigris) !important;
+    border-color: var(--antique-verdigris) !important;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--antique-verdigris) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(29, 87, 61, 0.4);
+}
+
+.btn-success {
+    background-color: var(--antique-verdigris) !important;
+    border-color: var(--antique-verdigris) !important;
+}
+
+/* Loading button spinner */
+.btn.is-loading {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.btn.is-loading::after {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    margin-left: 0.5rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+/* ==========================================================================
+   CARDS DUAL ARCHITECTURE:
+   1) Light Gallery Cards (.card-antique)
+   2) Dark Heritage Vault Cards (.card-antique-dark, .card-antique.border-secondary, etc.)
+   ========================================================================== */
+
+/* 1. Base / Light Gallery Card */
+.card-antique {
+    background-color: #ffffff;
+    color: var(--antique-text);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 14px;
+    box-shadow: var(--antique-shadow-sm);
+    transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-spring), border-color 0.4s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Top Subtle Gold Hairline Glow on Hover */
+.card-antique::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    z-index: 2;
+}
+
+.card-antique:hover::before {
+    opacity: 1;
+}
+
+.card-antique:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--antique-shadow-hover);
+    border-color: rgba(212, 175, 55, 0.55);
+}
+
+/* 2. Dark Heritage Vault Card
+   Automatically applies to:
+   - Explicit .card-antique-dark
+   - .card-antique with .border-secondary or .border-warning or .bg-dark
+   - .card-antique containing .text-white, .text-white-50, or .table-dark
+   - Admin sidebar, checkout, cart, reports hub, orders
+*/
+.card-antique-dark,
+.card-antique.border-secondary,
+.card-antique.border-warning,
+.card-antique.bg-dark,
+.card-antique:has(.text-white),
+.card-antique:has(.text-white-50),
+.card-antique:has(.table-dark),
+.card-antique:has(#adminSidebar),
+#adminSidebar,
+.card-vault,
+.modal-content.card-antique {
+    background: linear-gradient(150deg, #0c0f16 0%, #151a24 60%, #0e1219 100%) !important;
+    border: 1px solid rgba(212, 175, 55, 0.28) !important;
+    border-radius: 16px;
+    color: #ede7dc !important;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 20px rgba(212, 175, 55, 0.08) !important;
+}
+
+/* Ensure text inside dark vault cards has impeccable high contrast */
+.card-antique-dark h1, .card-antique-dark h2, .card-antique-dark h3, .card-antique-dark h4, .card-antique-dark h5, .card-antique-dark h6,
+.card-antique.border-secondary h1, .card-antique.border-secondary h2, .card-antique.border-secondary h3, .card-antique.border-secondary h4, .card-antique.border-secondary h5, .card-antique.border-secondary h6,
+.card-antique.border-warning h1, .card-antique.border-warning h2, .card-antique.border-warning h3, .card-antique.border-warning h4, .card-antique.border-warning h5, .card-antique.border-warning h6,
+.card-antique:has(.text-white) h1, .card-antique:has(.text-white) h2, .card-antique:has(.text-white) h3, .card-antique:has(.text-white) h4, .card-antique:has(.text-white) h5, .card-antique:has(.text-white) h6,
+#adminSidebar h1, #adminSidebar h2, #adminSidebar h3, #adminSidebar h4, #adminSidebar h5, #adminSidebar h6 {
+    color: #ffffff !important;
+}
+
+.card-antique-dark .text-white-50,
+.card-antique.border-secondary .text-white-50,
+.card-antique.border-warning .text-white-50,
+.card-antique:has(.text-white) .text-white-50,
+#adminSidebar .text-white-50 {
+    color: rgba(255, 255, 255, 0.78) !important;
+}
+
+/* Card Antique Header (Used across forms and modals) */
+.card-antique-header {
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.09) 0%, transparent 100%);
+    border-bottom: 1px solid var(--antique-parchment-border);
+    padding: 1.5rem 1.85rem;
+}
+
+.card-antique-dark .card-antique-header,
+.card-antique.border-secondary .card-antique-header,
+.card-antique.border-warning .card-antique-header {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.26);
+}
+
+/* Image Zoom Container */
+.card-antique .artifact-img-wrap,
+.card-antique .position-relative[style*="overflow: hidden"] {
+    position: relative;
+    overflow: hidden !important;
+    background: var(--antique-parchment);
+}
+
+.card-antique img {
+    transition: transform 0.65s var(--ease-spring), filter 0.65s ease;
+}
+
+.card-antique:hover img {
+    transform: scale(1.06);
+}
+
+/* Category Cards */
+.transition-hover {
+    transition: all 0.35s var(--ease-spring);
+}
+
+.transition-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--antique-shadow-hover);
+    border-color: var(--antique-gold) !important;
+}
+
+/* Watchlist Heart Button */
+.btn-card-watchlist {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50%;
+    color: var(--antique-text);
+    transition: transform 0.25s var(--ease-spring), background-color 0.2s ease, box-shadow 0.2s ease;
+    z-index: 10;
+}
+
+.btn-card-watchlist:hover {
+    background: #ffffff;
+    transform: scale(1.18);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    color: var(--antique-crimson);
+}
+
+@keyframes heartPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.4); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.heart-bounce {
+    animation: heartPulse 0.35s var(--ease-spring);
+}
+
+/* ==========================================================================
+   Badges System
+   ========================================================================== */
+.badge-antique-seal {
+    background: var(--antique-parchment);
+    color: var(--antique-text);
+    border: 1px solid var(--antique-parchment-border);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3em 0.65em;
+    border-radius: 6px;
+}
+
+.badge-antique-provenance {
+    background: var(--antique-verdigris-light);
+    color: var(--antique-verdigris);
+    border: 1px solid var(--antique-verdigris-border);
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.35em 0.7em;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.badge-antique-discount {
+    background: var(--antique-crimson);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.72rem;
+    padding: 0.35em 0.75em;
+    border-radius: 6px;
+    letter-spacing: 0.03em;
+    box-shadow: 0 4px 10px rgba(138, 28, 46, 0.4);
+}
+
+.badge-role-admin {
+    background-color: var(--antique-crimson) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.35em 0.75em;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(138, 28, 46, 0.35);
+}
+
+.badge-role-seller {
+    background-color: var(--antique-amber) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.35em 0.75em;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(194, 122, 39, 0.35);
+}
+
+.badge-role-buyer {
+    background-color: var(--antique-verdigris) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.35em 0.75em;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(29, 87, 61, 0.35);
+}
+
+/* ==========================================================================
+   Hero Section (Minimalist Editorial Exhibition — Spacious & Poised)
+   ========================================================================== */
+.hero-antique {
+    background: radial-gradient(circle at 50% 12%, rgba(212, 175, 55, 0.12) 0%, transparent 55%),
+                linear-gradient(180deg, #07090e 0%, #0d1017 100%);
+    color: #ffffff;
+    padding: 5.5rem 0 4.5rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-antique::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 650px;
+    height: 650px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.badge-curator-minimal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--antique-gold);
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    padding: 0.35rem 0.95rem;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+}
+
+.hero-antique h1 {
+    color: #ffffff;
+    font-size: 3.3rem;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.hero-antique h1 em {
+    font-style: italic;
+    font-family: var(--font-heading);
+    background: linear-gradient(135deg, #ffffff 0%, var(--antique-gold-bright) 50%, var(--antique-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-antique p.lead {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 1.1rem;
+    max-width: 680px;
+    line-height: 1.75;
+    font-weight: 400;
+}
+
+/* Minimalist Hero Search Capsule */
+.hero-search-box {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 36px;
+    padding: 6px 8px 6px 20px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    max-width: 620px;
+    margin: 0 auto;
+    transition: all 0.25s ease;
+}
+
+.hero-search-box:focus-within {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--antique-gold);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 16px rgba(212, 175, 55, 0.25);
+}
+
+.hero-search-input {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
+}
+
+.hero-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.92rem;
+}
+
+.btn-hero-search {
+    background: linear-gradient(135deg, var(--antique-gold) 0%, var(--antique-gold-deep) 100%);
+    color: #0b0d13 !important;
+    font-weight: 700;
+    font-size: 0.84rem;
+    letter-spacing: 0.04em;
+    padding: 0.55rem 1.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.25s var(--ease-spring);
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+}
+
+.btn-hero-search:hover {
+    background: linear-gradient(135deg, var(--antique-gold-bright) 0%, var(--antique-gold) 100%);
+    box-shadow: 0 4px 18px rgba(212, 175, 55, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Minimalist Period Discovery Chips */
+.chip-era {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.72) !important;
+    text-decoration: none;
+    padding: 0.25rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.chip-era:hover {
+    background: rgba(212, 175, 55, 0.12);
+    border-color: rgba(212, 175, 55, 0.35);
+    color: var(--antique-gold-bright) !important;
+    transform: translateY(-1px);
+}
+
+.chip-era-accent {
+    border-color: rgba(138, 28, 46, 0.45);
+    background: rgba(138, 28, 46, 0.15);
+    color: #f7aab5 !important;
+}
+
+.chip-era-accent:hover {
+    background: rgba(138, 28, 46, 0.3);
+    border-color: rgba(138, 28, 46, 0.7);
+    color: #ffffff !important;
+}
+
+.btn-antique-outline-light {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: 0.02em;
+    border-radius: 28px;
+    transition: all 0.25s var(--ease-spring);
+    padding: 0.6rem 1.4rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-antique-outline-light:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--antique-gold);
+    color: var(--antique-gold-bright) !important;
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Trust Statistics Metrics Ribbon (Minimalist Museum Ledger)
+   ========================================================================== */
+.trust-metrics-ribbon {
+    background: #080a0f !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.14) !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.14) !important;
+    padding: 1.8rem 0;
+}
+
+.trust-metrics-ribbon .border-secondary {
+    border-color: rgba(212, 175, 55, 0.12) !important;
+}
+
+.metric-number {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--antique-gold-bright);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.metric-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 0.35rem;
+}
+
+/* ==========================================================================
+   Minimalist Category Showcase
+   ========================================================================== */
+.card-category-minimal {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s var(--ease-spring);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-category-minimal:hover {
+    transform: translateY(-5px);
+    border-color: rgba(212, 175, 55, 0.45);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(212, 175, 55, 0.2);
+}
+
+.category-icon-minimal {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.24);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--antique-gold-deep);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.card-category-minimal:hover .category-icon-minimal {
+    background: var(--antique-gold);
+    color: #0b0d13;
+    border-color: var(--antique-gold-bright);
+    transform: scale(1.08);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+}
+
+.badge-cat-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--antique-text-muted);
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    padding: 0.2rem 0.65rem;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.link-category-explore {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--antique-gold-deep);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.link-category-explore:hover {
+    color: var(--antique-gold);
+    transform: translateX(4px);
+}
+
+/* ==========================================================================
+   Trust & Authenticity Guarantees Band (Clean Minimal Pillars)
+   ========================================================================== */
+.trust-band-antique {
+    background: #080a0f;
+    color: #ffffff;
+    border-top: 1px solid rgba(212, 175, 55, 0.16);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+    padding: 4rem 0;
+}
+
+.trust-pillar-card {
+    padding: 1rem 0.5rem;
+    transition: transform 0.25s var(--ease-spring);
+}
+
+.trust-pillar-card:hover {
+    transform: translateY(-3px);
+}
+
+.trust-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--antique-gold);
+    font-size: 1.3rem;
+    margin: 0 auto 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.trust-pillar-card:hover .trust-icon-wrap {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--antique-gold);
+    color: var(--antique-gold-bright);
+    transform: scale(1.08);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.3);
+}
+
+/* ==========================================================================
+   Tables & Data Presentation (Obsidian Ledger Theme)
+   ========================================================================== */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: inherit;
+    border-color: rgba(212, 175, 55, 0.18);
+}
+
+.table > :not(caption) > * > * {
+    padding: 0.9rem 1rem;
+}
+
+.table-dark {
+    background-color: transparent !important;
+    color: #ede7dc !important;
+}
+
+.table-dark thead th {
+    background-color: rgba(11, 13, 19, 0.88) !important;
+    color: var(--antique-gold) !important;
+    font-family: var(--font-heading);
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    border-bottom: 1.5px solid rgba(212, 175, 55, 0.38);
+}
+
+.table-dark tbody tr {
+    transition: background-color 0.18s ease;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.table-dark tbody tr:hover {
+    background-color: rgba(212, 175, 55, 0.08) !important;
+}
+
+/* ==========================================================================
+   Footer Component (Minimalist Museum Aesthetic)
+   ========================================================================== */
+.footer-antique {
+    background: #080a0f;
+    color: rgba(255, 255, 255, 0.72);
+    border-top: 1px solid rgba(212, 175, 55, 0.16);
+    padding: 4.5rem 0 2rem;
+    margin-top: auto;
+}
+
+.footer-antique h6 {
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.15rem;
+}
+
+.footer-antique a {
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}
+
+.footer-antique a:hover {
+    color: var(--antique-gold-bright);
+    transform: translateX(3px);
+}
+
+/* ==========================================================================
+   Form Controls & Accessible Validation
+   ========================================================================== */
+.form-label {
+    font-weight: 600;
+    color: var(--antique-text);
+    font-size: 0.92rem;
+    margin-bottom: 0.35rem;
+}
+
+.form-label .required-star {
+    color: var(--antique-crimson);
+    margin-left: 2px;
+}
+
+.form-control, .form-select {
+    border: 1.5px solid var(--antique-parchment-border);
+    border-radius: 10px;
+    padding: 0.65rem 0.95rem;
+    color: var(--antique-text);
+    background-color: #ffffff;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--antique-gold);
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.28);
+    outline: none;
+}
+
+/* Dark mode form controls inside dark vault cards */
+.card-antique-dark .form-control,
+.card-antique-dark .form-select,
+.card-antique.border-secondary .form-control,
+.card-antique.border-secondary .form-select,
+.card-antique:has(.text-white) .form-control,
+.card-antique:has(.text-white) .form-select {
+    background-color: rgba(11, 13, 19, 0.8);
+    border-color: rgba(212, 175, 55, 0.32);
+    color: #ffffff;
+}
+
+.card-antique-dark .form-control:focus,
+.card-antique-dark .form-select:focus,
+.card-antique.border-secondary .form-control:focus,
+.card-antique.border-secondary .form-select:focus {
+    background-color: rgba(11, 13, 19, 0.98);
+    border-color: var(--antique-gold);
+    color: #ffffff;
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: var(--antique-crimson) !important;
+}
+
+.invalid-feedback {
+    color: var(--antique-crimson);
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Alerts & Notifications
+   ========================================================================== */
+.alert-antique {
+    border-radius: 12px;
+    border-width: 1px;
+    box-shadow: var(--antique-shadow-sm);
+    padding: 1rem 1.25rem;
+}
+
+.alert-antique.alert-success {
+    background-color: var(--antique-verdigris-light);
+    border-color: var(--antique-verdigris-border);
+    color: var(--antique-verdigris);
+}
+
+.alert-antique.alert-danger, .alert-antique.alert-error {
+    background-color: var(--antique-crimson-light);
+    border-color: var(--antique-crimson-border);
+    color: var(--antique-crimson);
+}
+
+.alert-antique.alert-warning {
+    background-color: var(--antique-amber-light);
+    border-color: rgba(212, 175, 55, 0.45);
+    color: var(--antique-amber);
+}
+
+/* ==========================================================================
+   Floating Back to Top Button
+   ========================================================================== */
+.btn-back-to-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--antique-gold) 0%, var(--antique-gold-deep) 100%);
+    color: var(--antique-obsidian);
+    border: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.55rem;
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: all 0.35s var(--ease-spring);
+}
+
+.btn-back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.btn-back-to-top:hover {
+    background: linear-gradient(135deg, var(--antique-gold-hover) 0%, var(--antique-gold) 100%);
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.6);
+}
+
+/* Top Loading Progress Bar */
+#globalLoadingBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3.5px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--antique-gold) 0%, #fae8cb 50%, #ffffff 100%);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.9);
+    z-index: 99999;
+    transition: width 0.3s ease, opacity 0.4s ease;
+    pointer-events: none;
+    opacity: 0;
+}
+
+#globalLoadingBar.active {
+    opacity: 1;
+}
+
+/* Spinner Border */
+.spinner-border-antique {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: -0.125em;
+    border: 0.18em solid rgba(212, 175, 55, 0.28);
+    border-right-color: var(--antique-gold);
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+/* Empty State Component */
+.empty-state-antique {
+    background: linear-gradient(135deg, #ffffff 0%, var(--antique-parchment) 100%);
+    border: 2px dashed var(--antique-parchment-border);
+    border-radius: 14px;
+    padding: 3.5rem 1.5rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    transition: border-color 0.3s ease;
+}
+
+.empty-state-antique:hover {
+    border-color: var(--antique-gold);
+}
+
+.empty-state-icon-wrapper {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.16);
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    border-radius: 50%;
+    color: var(--antique-gold-deep);
+    font-size: 2.6rem;
+    animation: subtleFloat 4s ease-in-out infinite;
+}
+
+.empty-state-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--antique-text);
+    margin-bottom: 0.6rem;
+}
+
+.empty-state-desc {
+    color: var(--antique-text-muted);
+    font-size: 0.98rem;
+    max-width: 480px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.6;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 767.98px) {
+    .brand-title {
+        font-size: 1.2rem;
+    }
+    .hero-antique {
+        padding: 4rem 0 3rem;
+    }
+    .hero-antique h1 {
+        font-size: 2.3rem;
+    }
+    .hero-antique p {
+        font-size: 1.05rem;
+    }
+}
+
+/* ==========================================================================
+   Breadcrumb Component
+   ========================================================================== */
+.breadcrumb-antique-nav {
+    background-color: var(--antique-parchment);
+    border: 1px solid var(--antique-parchment-border);
+    border-radius: 10px;
+    padding: 0.65rem 1.15rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(11, 13, 19, 0.04);
+}
+
+.breadcrumb-antique {
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.breadcrumb-antique .breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-antique .breadcrumb-item a {
+    color: var(--antique-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-antique .breadcrumb-item a:hover {
+    color: var(--antique-gold-deep);
+    text-decoration: underline;
+}
+
+.breadcrumb-antique .breadcrumb-item.active {
+    color: var(--antique-text-muted);
+    font-weight: 600;
+}
+
+.breadcrumb-antique .breadcrumb-item + .breadcrumb-item::before {
+    content: "\F285"; /* Bootstrap Icons bi-chevron-right */
+    font-family: "bootstrap-icons";
+    font-size: 0.75rem;
+    color: var(--antique-gold);
+    padding: 0 0.55rem;
+    opacity: 0.85;
+}
+
+/* ==========================================================================
+   Image Preview Upload Component
+   ========================================================================== */
+.image-preview-wrapper {
+    margin-top: 0.65rem;
+}
+
+.image-preview-box {
+    position: relative;
+    display: inline-block;
+    border: 2px solid var(--antique-parchment-border);
+    border-radius: 8px;
+    padding: 6px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(11, 13, 19, 0.08);
+    transition: all 0.25s ease;
+}
+
+.image-preview-box:hover {
+    border-color: var(--antique-gold);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}
+
+.image-preview-thumb {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.image-preview-meta {
+    font-size: 0.78rem;
+    color: var(--antique-text-muted);
+    margin-top: 0.4rem;
+    max-width: 140px;
+    word-break: break-all;
+    text-align: center;
+}
+
+.image-preview-remove-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--antique-crimson);
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.image-preview-remove-btn:hover {
+    background-color: #6a1321;
+    transform: scale(1.15);
+}
+
+.file-dropzone-antique {
+    border: 2px dashed var(--antique-gold);
+    background-color: rgba(212, 175, 55, 0.06);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.file-dropzone-antique:hover,
+.file-dropzone-antique.drag-over {
+    background-color: rgba(212, 175, 55, 0.16);
+    border-color: var(--antique-gold-deep);
+}
+
+/* ==========================================================================
+   Admin Console Sidebar Navigation
+   ========================================================================== */
+.admin-sidebar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s var(--ease-smooth);
+}
+
+.admin-sidebar-nav .nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(212, 175, 55, 0.14) !important;
+    transform: translateX(4px);
+}
+
+.admin-sidebar-nav .nav-link.active {
+    color: var(--antique-gold) !important;
+    background-color: rgba(212, 175, 55, 0.18) !important;
+    border-left: 3px solid var(--antique-gold) !important;
+    font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   Toast Notification Component
+   ========================================================================== */
+.antique-toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.antique-toast {
+    pointer-events: auto;
+    background: rgba(11, 13, 19, 0.95);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 12px;
+    color: #ffffff;
+    padding: 0.85rem 1.25rem;
+    font-size: 0.92rem;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 16px var(--antique-gold-glow);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.35s var(--ease-spring);
+    max-width: 380px;
+}
+
+.antique-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Celestial Astrolabe & Orrery Artifact Animations (Error & Vault Screens)
+   ========================================================================== */
+@keyframes orrerySpinClockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes orrerySpinCounter {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+@keyframes orreryGlowPulse {
+    0%, 100% {
+        box-shadow: 0 0 25px rgba(212, 175, 55, 0.35), inset 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 50px rgba(212, 175, 55, 0.7), inset 0 0 30px rgba(212, 175, 55, 0.45);
+    }
+}
+
+.astrolabe-showcase {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.astrolabe-ambient-glow {
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.28) 0%, rgba(212, 175, 55, 0.06) 50%, transparent 75%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: orreryGlowPulse 4s ease-in-out infinite;
+}
+
+.astrolabe-ring-outer {
+    position: absolute;
+    width: 136px;
+    height: 136px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(212, 175, 55, 0.55);
+    animation: orrerySpinClockwise 32s linear infinite;
+}
+
+.astrolabe-ring-mid {
+    position: absolute;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(212, 175, 55, 0.4);
+    border-top-color: var(--antique-gold);
+    border-bottom-color: var(--antique-gold);
+    animation: orrerySpinCounter 20s linear infinite;
+}
+
+.astrolabe-core {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.35) 0%, #151a24 100%);
+    border: 2px solid var(--antique-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--antique-gold-bright);
+    font-size: 2.2rem;
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.55);
+    z-index: 2;
+    animation: subtleFloat 3s ease-in-out infinite;
+}
+
+/* Filigree Corner Brackets for Luxury Vault Cards */
+.card-filigree {
+    position: relative;
+}
+
+.card-filigree::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 24px;
+    height: 24px;
+    border-top: 2px solid var(--antique-gold);
+    border-left: 2px solid var(--antique-gold);
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.card-filigree::after {
+    content: "";
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    width: 24px;
+    height: 24px;
+    border-bottom: 2px solid var(--antique-gold);
+    border-right: 2px solid var(--antique-gold);
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+/* Pulsing Live Status Dot */
+.status-pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--antique-gold);
+    box-shadow: 0 0 8px var(--antique-gold);
+    animation: badgePulse 2s infinite;
+}
+
+.status-pulse-dot.dot-emerald {
+    background-color: #2ec4b6;
+    box-shadow: 0 0 8px #2ec4b6;
+}
+
+/* ==========================================================================
+   Global Luxury Scrollbar System
+   ========================================================================== */
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0d1017;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d4af37 0%, #856417 100%);
+    border-radius: 6px;
+    border: 2px solid #0d1017;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #f5e4b8 0%, #d4af37 100%);
+}
+
+/* ==========================================================================
+   Navbar Quick Search Pill & Keyboard Shortcut Chip
+   ========================================================================== */
+.nav-search-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 20px;
+    padding: 2px 4px;
+    transition: all 0.3s var(--ease-spring);
+}
+
+.nav-search-pill:hover,
+.nav-search-pill:focus-within {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--antique-gold);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.32);
+}
+
+.nav-search-pill input {
+    color: #ffffff !important;
+}
+
+.nav-search-pill input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.82rem;
+}
+
+.nav-kbd-chip {
+    font-size: 0.65rem;
+    font-family: inherit;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: var(--antique-gold-bright);
+    border-radius: 5px;
+    padding: 2px 6px;
+    letter-spacing: 0.5px;
+    user-select: none;
+}
+
+/* ==========================================================================
+   Table of Contents & Policy Navigation
+   ========================================================================== */
+#policyNavList .list-group-item {
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    color: var(--antique-text-muted);
+    background: transparent;
+}
+
+#policyNavList .list-group-item:hover {
+    color: var(--antique-text);
+    background: rgba(212, 175, 55, 0.08);
+    padding-left: 1.25rem;
+}
+
+#policyNavList .list-group-item.active {
+    background: rgba(212, 175, 55, 0.15);
+    border-left-color: var(--antique-gold);
+    color: var(--antique-text);
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   Curatorial Charter Print Styles
+   ========================================================================== */
+@media print {
+    #mainNavbar,
+    footer,
+    #btnBackToTop,
+    .breadcrumb-antique-nav,
+    .sticky-top,
+    .btn {
+        display: none !important;
+    }
+
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+    }
+
+    .card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+
+    .text-gradient-gold,
+    .brand-font {
+        color: #000000 !important;
+        -webkit-text-fill-color: initial !important;
+    }
+}
+
+/* ==========================================================================
+   Home Page: Featured Royal Antiquities (Private Imperial Vault - Minimal & Pro)
+   ========================================================================== */
+.section-royal-vault {
+    background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 60%),
+                linear-gradient(180deg, #07090e 0%, #0d1017 50%, #07090e 100%);
+    color: #ffffff;
+    padding: 5rem 0 5.5rem;
+    position: relative;
+    border-top: 1px solid rgba(212, 175, 55, 0.16);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+    overflow: hidden;
+}
+
+.section-royal-vault::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
+}
+
+.card-royal-vault {
+    background: #0f131c !important;
+    border: 1px solid rgba(212, 175, 55, 0.18) !important;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5) !important;
+    transition: transform 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-spring), border-color 0.35s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-royal-vault:hover {
+    transform: translateY(-6px);
+    border-color: rgba(212, 175, 55, 0.45) !important;
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 175, 55, 0.15) !important;
+}
+
+.card-royal-vault .artifact-img-wrap {
+    overflow: hidden;
+    position: relative;
+}
+
+.card-royal-vault .artifact-img-wrap img {
+    transition: transform 0.55s var(--ease-spring);
+}
+
+.card-royal-vault:hover .artifact-img-wrap img {
+    transform: scale(1.06);
+}
+
+.card-royal-vault .artifact-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, transparent 50%, rgba(10, 13, 20, 0.85) 100%);
+    pointer-events: none;
+}
+
+.badge-royal-discount {
+    background: var(--antique-crimson);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(138, 28, 46, 0.5);
+    z-index: 3;
+}
+
+.badge-royal-era {
+    background: rgba(10, 13, 20, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--antique-gold-bright);
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.22rem 0.6rem;
+    border-radius: 16px;
+    z-index: 3;
+}
+
+.btn-royal-watchlist {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(10, 13, 20, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.btn-royal-watchlist:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--antique-gold);
+    color: var(--antique-gold-bright);
+    transform: scale(1.1);
+}
+
+.badge-royal-cat {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--antique-gold);
+}
+
+.price-gold-display {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--antique-gold-bright);
+    display: inline-block;
+    letter-spacing: -0.01em;
+}
+
+.btn-royal-inspect {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 55, 0.38);
+    color: var(--antique-gold-bright) !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    padding: 0.38rem 0.95rem;
+    border-radius: 20px;
+    transition: all 0.25s var(--ease-spring);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.btn-royal-inspect:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--antique-gold);
+    color: #ffffff !important;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Page Layout & Sticky Sidebars Architecture
+   Prevents footer collisions, guarantees minimum viewport heights,
+   and enables smooth internal scrolling on filter and admin sidebars.
+   ========================================================================== */
+.page-min-height {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.catalog-content-min-height {
+    min-height: 680px;
+}
+
+.admin-content-min-height {
+    min-height: 620px;
+}
+
+.sticky-filter-sidebar {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 90px !important;
+    max-height: calc(100vh - 110px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(212, 175, 55, 0.45) transparent !important;
+    z-index: 10 !important;
+}
+
+.sticky-filter-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sticky-filter-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sticky-filter-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.4);
+    border-radius: 4px;
+}
+
+.sticky-filter-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--antique-gold);
+}
+
+.sticky-admin-sidebar {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 90px !important;
+    max-height: calc(100vh - 110px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(212, 175, 55, 0.45) transparent !important;
+    z-index: 10 !important;
+}
+
+.sticky-admin-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sticky-admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sticky-admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.4);
+    border-radius: 4px;
+}
+
+.sticky-admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--antique-gold);
+}
+
+/* ==========================================================================
+   Privacy Policy & Curatorial Charter (Minimal & Pro)
+   ========================================================================== */
+.policy-doc-card {
+    background: #ffffff;
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 16px;
+    box-shadow: var(--antique-shadow-sm);
+    padding: 3rem 3.5rem;
+}
+
+@media (max-width: 767.98px) {
+    .policy-doc-card {
+        padding: 1.5rem;
+    }
+}
+
+.policy-nav-pills {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.policy-nav-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.policy-nav-pill {
+    white-space: nowrap;
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--antique-text-muted);
+    background: #ffffff;
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    text-decoration: none;
+    transition: all 0.2s var(--ease-spring);
+}
+
+.policy-nav-pill:hover,
+.policy-nav-pill.active {
+    color: var(--antique-text);
+    border-color: var(--antique-gold);
+    background: rgba(212, 175, 55, 0.12);
+}
+
+.policy-section {
+    padding-bottom: 2.25rem;
+    margin-bottom: 2.25rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.policy-section:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.policy-section h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--antique-text);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.policy-section p {
+    color: var(--antique-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 0.85rem;
+}
+
+.policy-section ul {
+    margin-bottom: 1rem;
+    padding-left: 1.25rem;
+}
+
+.policy-section li {
+    color: var(--antique-text-muted);
+    font-size: 0.93rem;
+    line-height: 1.7;
+    margin-bottom: 0.45rem;
+}
+
+.policy-section li strong {
+    color: var(--antique-text);
+}
+
+.policy-highlight-box {
+    background: rgba(212, 175, 55, 0.06);
+    border-left: 3px solid var(--antique-gold);
+    border-radius: 0 10px 10px 0;
+    padding: 1.15rem 1.35rem;
+    margin: 1.25rem 0;
+}
+
+/* ==========================================================================
+   Luxury Pagination System & Active Color Harmonization
+   Replaces Bootstrap's default electric blue with Radiant Imperial Gold
+   ========================================================================== */
+.pagination {
+    --bs-pagination-color: var(--antique-text);
+    --bs-pagination-bg: #ffffff;
+    --bs-pagination-border-color: rgba(212, 175, 55, 0.26);
+    --bs-pagination-hover-color: var(--antique-obsidian);
+    --bs-pagination-hover-bg: rgba(212, 175, 55, 0.12);
+    --bs-pagination-hover-border-color: var(--antique-gold);
+    --bs-pagination-focus-color: var(--antique-obsidian);
+    --bs-pagination-focus-bg: rgba(212, 175, 55, 0.16);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.22rem rgba(212, 175, 55, 0.28);
+    --bs-pagination-active-color: #0b0d13;
+    --bs-pagination-active-bg: var(--antique-gold);
+    --bs-pagination-active-border-color: var(--antique-gold);
+    --bs-pagination-disabled-color: var(--antique-text-light);
+    --bs-pagination-disabled-bg: rgba(244, 236, 224, 0.4);
+    --bs-pagination-disabled-border-color: rgba(212, 175, 55, 0.16);
+    gap: 4px;
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link,
+.pagination .page-link {
+    border-radius: 8px !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.85rem;
+    transition: all 0.2s var(--ease-smooth);
+    border: 1px solid rgba(212, 175, 55, 0.26);
+}
+
+.pagination.pagination-sm .page-link {
+    font-size: 0.82rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px !important;
+}
+
+/* Default / Inactive Page Link */
+.pagination .page-link:not(.active):not(.bg-warning) {
+    color: var(--antique-text);
+    background-color: #ffffff;
+    border-color: rgba(212, 175, 55, 0.24);
+}
+
+/* Hover state */
+.pagination .page-item:not(.active):not(.disabled) .page-link:hover,
+.pagination .page-link:not(.active):not(.bg-warning):hover {
+    color: var(--antique-obsidian) !important;
+    background-color: rgba(212, 175, 55, 0.14) !important;
+    border-color: var(--antique-gold) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
+}
+
+/* Active State: Radiant Imperial Gold with Midnight Obsidian Text */
+.pagination .page-item.active .page-link,
+.pagination .page-item.active > a,
+.pagination .page-item.active > span,
+.pagination .page-link.active,
+.page-item.active .page-link,
+.page-link.active,
+.pagination .page-link.bg-warning {
+    background: linear-gradient(135deg, var(--antique-gold) 0%, var(--antique-gold-deep) 100%) !important;
+    background-color: var(--antique-gold) !important;
+    color: #0b0d13 !important;
+    border-color: var(--antique-gold) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35) !important;
+    z-index: 3;
+}
+
+.pagination .page-item.active .page-link:hover,
+.pagination .page-item.active > a:hover,
+.pagination .page-item.active > span:hover,
+.pagination .page-link.active:hover,
+.pagination .page-link.bg-warning:hover {
+    background: linear-gradient(135deg, var(--antique-gold-bright) 0%, var(--antique-gold) 100%) !important;
+    color: #0b0d13 !important;
+    border-color: var(--antique-gold-hover) !important;
+}
+
+/* Disabled State */
+.pagination .page-item.disabled .page-link,
+.pagination .page-item.disabled > span,
+.pagination .page-item.disabled > a,
+.page-item.disabled .page-link {
+    background-color: rgba(244, 236, 224, 0.45) !important;
+    color: var(--antique-text-light) !important;
+    border-color: rgba(212, 175, 55, 0.14) !important;
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Focus State */
+.pagination .page-link:focus {
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.3) !important;
+    outline: none;
+}
+
+/* Dark Container / Dark Card Pagination Support */
+.card-footer.bg-dark .pagination .page-link:not(.active):not(.bg-warning),
+.card.bg-dark .pagination .page-link:not(.active):not(.bg-warning),
+.bg-dark .pagination .page-link:not(.active):not(.bg-warning),
+.pagination-dark .page-link:not(.active):not(.bg-warning) {
+    background-color: var(--antique-charcoal) !important;
+    border-color: rgba(212, 175, 55, 0.22) !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.card-footer.bg-dark .pagination .page-item.disabled .page-link,
+.card.bg-dark .pagination .page-item.disabled .page-link,
+.bg-dark .pagination .page-item.disabled .page-link,
+.pagination-dark .page-item.disabled .page-link {
+    background-color: rgba(11, 13, 19, 0.5) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.card-footer.bg-dark .pagination .page-link:not(.active):not(.bg-warning):hover,
+.card.bg-dark .pagination .page-link:not(.active):not(.bg-warning):hover,
+.bg-dark .pagination .page-link:not(.active):not(.bg-warning):hover,
+.pagination-dark .page-link:not(.active):not(.bg-warning):hover {
+    background-color: rgba(212, 175, 55, 0.2) !important;
+    border-color: var(--antique-gold) !important;
+    color: #ffffff !important;
+}
+
+
+
+
+
+

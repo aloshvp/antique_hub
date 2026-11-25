@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seller Registration — Antique Hub{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'accounts:login' %}">Authentication</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Seller Registration</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 page-min-height pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-antique shadow-lg border-0">
+                <!-- Header -->
+                <div class="card-antique-header text-center py-4">
+                    <span class="badge bg-warning text-dark mb-2 px-3 py-1 fw-bold">
+                        <i class="bi bi-hourglass-split me-1"></i> Admin Verification Required
+                    </span>
+                    <h3 class="font-serif mb-1">Antique Dealer & Seller Registration</h3>
+                    <p class="text-muted small mb-0">Showcase authentic heritage antiquities to certified collectors across India</p>
+                </div>
+
+                <!-- Verification Workflow Alert (Seller Verification Workflow) -->
+                <div class="alert alert-warning m-4 mb-0 d-flex align-items-center small" role="alert">
+                    <i class="bi bi-shield-exclamation fs-3 text-warning-emphasis me-3"></i>
+                    <div>
+                        <strong>Notice on Seller Activation (Platform Onboarding):</strong>
+                        Your seller account will be initialized with status <code>Pending</code>. 
+                        To maintain authenticity and prevent fraudulent listings, item uploading and stock management 
+                        will be unlocked once our Administrator verifies your profile.
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small mb-4">
+                            {% for error in form.non_field_errors %}
+                                <div><i class="bi bi-exclamation-octagon-fill me-1"></i> {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'accounts:seller_register' %}" novalidate id="sellerRegisterForm">
+                        {% csrf_token %}
+
+                        <!-- Section 1: Business & Contact Info -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-shop text-warning me-1"></i> 1. Dealership & Contact Profile
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Contact / Dealer Name *</label>
+                                {{ form.contactname }}
+                                {% if form.contactname.errors %}
+                                    <div class="text-danger small mt-1">{{ form.contactname.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Username *</label>
+                                {{ form.username }}
+                                <div id="username-feedback" class="form-text"></div>
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Business Email *</label>
+                                {{ form.email }}
+                                <div id="email-feedback" class="form-text"></div>
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Contact Phone (10-Digit Mobile) *</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small mt-1">{{ form.phone.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small">{{ form.business_license.label }}</label>
+                                {{ form.business_license }}
+                                {% if form.business_license.errors %}
+                                    <div class="text-danger small mt-1">{{ form.business_license.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Showroom & Location Hierarchy -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-pin-map-fill text-warning me-1"></i> 2. Gallery Address & Cascading Location
+                        </h6>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Gallery / Warehouse Address *</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger small mt-1">{{ form.address.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">State *</label>
+                                {{ form.state }}
+                                {% if form.state.errors %}
+                                    <div class="text-danger small mt-1">{{ form.state.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">District *</label>
+                                {{ form.district }}
+                                {% if form.district.errors %}
+                                    <div class="text-danger small mt-1">{{ form.district.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">Location / Ward *</label>
+                                {{ form.location }}
+                                {% if form.location.errors %}
+                                    <div class="text-danger small mt-1">{{ form.location.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Password & Security -->
+                        <h6 class="text-uppercase fw-bold text-muted small letter-spacing-1 mb-3">
+                            <i class="bi bi-shield-lock-fill text-warning me-1"></i> 3. Security Credentials
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Password (Min 8 characters, letters & digits) *</label>
+                                {{ form.password }}
+                                {% if form.password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Confirm Password *</label>
+                                {{ form.confirm_password }}
+                                {% if form.confirm_password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.confirm_password.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-antique-gold w-100 py-2 fs-6 mb-3" id="sellerSubmitBtn">
+                            <i class="bi bi-shop me-2"></i> Submit Seller Registration for Verification
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3 border-top small">
+                    <span class="text-muted">Already registered as a Seller?</span>
+                    <a href="{% url 'accounts:login' %}" class="fw-semibold ms-1 text-warning">Sign In Here</a>
+                    <span class="mx-2 text-muted">&bull;</span>
+                    <a href="{% url 'accounts:buyer_register' %}" class="text-muted">Register as Antique Buyer instead</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Cart Removal | Antique Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 620px;">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}" class="text-decoration-none text-warning"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:cart_view' %}" class="text-decoration-none text-warning">Cart</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Confirm Removal</li>
+        </ol>
+    </nav>
+
+    <!-- Confirmation Card -->
+    <div class="card card-antique border-danger border-opacity-50 shadow-lg p-4">
+        <div class="text-center mb-4">
+            <div class="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-3">
+                <i class="bi bi-cart-x-fill fs-1"></i>
+            </div>
+            <h3 class="brand-font text-warning mb-1">Remove Item from Cart?</h3>
+            <p class="text-white-50 small mb-0">Confirm removal of curated artifact from cart ledger</p>
+        </div>
+
+        <div class="card bg-dark bg-opacity-75 border-secondary border-opacity-50 p-3 mb-4 rounded">
+            <div class="d-flex align-items-center gap-3">
+                {% if cart_entry.item.image1 %}
+                    <img src="{{ cart_entry.item.image1.url }}" alt="{{ cart_entry.item.title }}" class="rounded border border-secondary border-opacity-50" style="width: 75px; height: 75px; object-fit: cover;">
+                {% else %}
+                    <div class="rounded border border-secondary border-opacity-50 d-flex align-items-center justify-content-center text-white-50" style="width: 75px; height: 75px;">
+                        <i class="bi bi-image fs-4"></i>
+                    </div>
+                {% endif %}
+                <div class="flex-grow-1">
+                    <span class="badge bg-secondary bg-opacity-50 text-warning small mb-1">{{ cart_entry.item.category.category }}</span>
+                    <h5 class="text-white mb-1">{{ cart_entry.item.title }}</h5>
+                    <div class="text-white-50 small">
+                        Quantity: <strong>{{ cart_entry.quantity }}</strong> &bull; Subtotal: <strong class="text-warning">₹{{ cart_entry.subtotal|floatformat:2 }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-white-50 text-center mb-4 small">
+            Removing this piece will release your temporary cart hold. Another vintage collector may purchase it if stock is limited.
+        </p>
+
+        <form method="post" action="{% url 'orders:remove_from_cart' cart_entry.cartid %}" class="d-flex gap-3">
+            {% csrf_token %}
+            <a href="{% url 'orders:cart_view' %}" class="btn btn-outline-secondary w-50 py-2">
+                <i class="bi bi-arrow-left me-1"></i> Cancel, Keep Item
+            </a>
+            <button type="submit" class="btn btn-danger w-50 py-2 shadow-sm" id="btnConfirmDelete">
+                <i class="bi bi-trash3 me-1"></i> Yes, Remove from Cart
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

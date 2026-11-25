@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Master Payment &amp; Order Ledger | Admin Console | Antique Hub{% endblock %}
+{% block meta_description %}Comprehensive administrator audit ledger for all antique marketplace payments, order disbursements, and settlement transactions on Antique Hub.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:admin_orders' %}">Admin Orders</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Master Payment Ledger</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+
+    <!-- Header Banner -->
+    <div class="card card-antique p-4 mb-4 border-secondary border-opacity-25 shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark font-monospace fw-bold px-3 py-2 mb-2">
+                    <i class="bi bi-shield-lock-fill me-1"></i> ADMINISTRATOR PLATFORM AUDIT
+                </span>
+                <h2 class="brand-font text-white mb-1">Master Payment &amp; Order Ledger</h2>
+                <p class="text-white-50 small mb-0">
+                    Supervise Gross Marketplace Volume (GMV), payment gateway settlement logs, and transaction reconciliations.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'orders:admin_orders' %}" class="btn btn-antique-dark">
+                    <i class="bi bi-sliders me-1"></i> Fulfillment Console
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform KPI Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-antique border-success border-opacity-50 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle fs-3">
+                        <i class="bi bi-currency-rupee"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">Settled Volume (Paid)</div>
+                        <div class="fs-4 fw-bold text-success font-monospace">₹{{ total_paid_volume|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-antique border-warning border-opacity-50 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-check2-all"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">Paid Orders</div>
+                        <div class="fs-4 fw-bold text-warning font-monospace">{{ total_paid_count }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-antique border-danger border-opacity-50 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle fs-3">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">Unpaid / Pending Total</div>
+                        <div class="fs-4 fw-bold text-danger font-monospace">₹{{ total_unpaid_volume|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-antique border-info border-opacity-50 p-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle fs-3">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase">COD Transactions</div>
+                        <div class="fs-4 fw-bold text-info font-monospace">{{ cod_orders_count }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Console -->
+    <div class="card card-antique border-secondary border-opacity-25 p-4 mb-4 shadow-sm">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label text-white-50 small">From Date:</label>
+                <input type="date" name="start_date" class="form-control form-control-antique" value="{{ start_date }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-white-50 small">To Date:</label>
+                <input type="date" name="end_date" class="form-control form-control-antique" value="{{ end_date }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-white-50 small">Order Status:</label>
+                <select name="order_status" class="form-select form-select-antique">
+                    <option value="">All Statuses</option>
+                    {% for code, label in status_choices %}
+                        <option value="{{ code }}" {% if order_status == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-white-50 small">Payment Status:</label>
+                <select name="pay_status" class="form-select form-select-antique">
+                    <option value="">All Statuses</option>
+                    {% for code, label in pay_status_choices %}
+                        <option value="{{ code }}" {% if pay_status == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-white-50 small">Method:</label>
+                <select name="method" class="form-select form-select-antique">
+                    <option value="">All Methods</option>
+                    {% for code, label in method_choices %}
+                        <option value="{{ code }}" {% if method == code %}selected{% endif %}>{{ code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-white-50 small">Search:</label>
+                <input type="text" name="search" class="form-control form-control-antique"
+                       placeholder="Order #, TXN Ref, Bank" value="{{ search_query }}">
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{% url 'payments:admin_payments' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters
+                </a>
+                <button type="submit" class="btn btn-antique-gold px-4">
+                    <i class="bi bi-funnel-fill me-1"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Master Transaction Ledger Table -->
+    <div class="card card-antique border-secondary border-opacity-25 shadow-sm overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead class="border-secondary border-opacity-50 text-warning font-serif small">
+                    <tr>
+                        <th class="ps-4">Order #</th>
+                        <th>Order Date</th>
+                        <th>Customer / Buyer</th>
+                        <th>Amount</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                        <th>Method &amp; Institution</th>
+                        <th>Transaction Reference</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="border-secondary border-opacity-25">
+                    {% for order in page_obj %}
+                    <tr>
+                        <td class="ps-4 font-monospace fw-bold text-warning">
+                            #{{ order.purchaseid }}
+                        </td>
+                        <td class="small text-white-50">
+                            {{ order.purdate|date:"d M Y, h:i A" }}
+                        </td>
+                        <td>
+                            <div class="fw-bold text-white">{{ order.buyer.username }}</div>
+                            <small class="text-white-50">{{ order.buyer.email }}</small>
+                        </td>
+                        <td class="font-monospace fw-bold text-white">
+                            ₹{{ order.tot_amt|floatformat:2 }}
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if order.status == 'Pending' %}bg-warning text-dark
+                                {% elif order.status == 'Confirmed' %}bg-info text-dark
+                                {% elif order.status == 'Shipped' %}bg-primary
+                                {% elif order.status == 'Delivered' %}bg-success
+                                {% elif order.status == 'Cancelled' %}bg-danger
+                                {% endif %} font-monospace">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if order.pay_status == 'Paid' %}bg-success
+                                {% elif order.pay_status == 'Unpaid' %}bg-danger
+                                {% elif order.pay_status == 'Pending' %}bg-warning text-dark
+                                {% elif order.pay_status == 'Refunded' %}bg-secondary
+                                {% else %}bg-dark
+                                {% endif %} font-monospace">
+                                {{ order.pay_status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if order.payment_record %}
+                                <div class="text-white small fw-bold">{{ order.payment_record.method }}</div>
+                                {% if order.payment_record.card_last4 %}
+                                    <div class="small text-white-50 font-monospace">
+                                        &bull;&bull;&bull;&bull; {{ order.payment_record.card_last4 }} ({{ order.payment_record.card_type }})
+                                    </div>
+                                {% endif %}
+                                {% if order.payment_record.bank_name %}
+                                    <small class="text-muted">{{ order.payment_record.bank_name }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted small">No Payment Log</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.payment_record %}
+                                <span class="badge bg-dark border border-secondary text-warning font-monospace small">
+                                    {{ order.payment_record.transaction_ref }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted small font-monospace">&mdash;</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'orders:order_detail' order.purchaseid %}" class="btn btn-antique-dark" title="Inspect Order &amp; Fulfillment">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if order.pay_status == 'Paid' %}
+                                    <a href="{% url 'payments:receipt' order.purchaseid %}" class="btn btn-outline-warning" title="View Official Tax Invoice">
+                                        <i class="bi bi-receipt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-white-50">
+                            <i class="bi bi-clipboard-x fs-1 text-muted d-block mb-3"></i>
+                            <h5 class="text-white font-serif">No transactions matched your filters</h5>
+                            <p class="small text-white-50 mb-0">Adjust date range or reset filters to display platform transactions.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Master ledger pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link bg-dark border-secondary text-warning" href="?page={{ page_obj.previous_page_number }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if order_status %}&order_status={{ order_status }}{% endif %}{% if pay_status %}&pay_status={{ pay_status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        &laquo; Previous
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link {% if page_obj.number == num %}bg-warning border-warning text-dark font-monospace fw-bold{% else %}bg-dark border-secondary text-white-50{% endif %}"
+                       href="?page={{ num }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if order_status %}&order_status={{ order_status }}{% endif %}{% if pay_status %}&pay_status={{ pay_status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link bg-dark border-secondary text-warning" href="?page={{ page_obj.next_page_number }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if order_status %}&order_status={{ order_status }}{% endif %}{% if pay_status %}&pay_status={{ pay_status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        Next &raquo;
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

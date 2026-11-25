@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tax Invoice &amp; Payment Receipt | Order #{{ order.purchaseid }} | Antique Hub{% endblock %}
+{% block meta_description %}Official tax invoice and payment authorization receipt for Antique Hub Order #{{ order.purchaseid }}.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Screen Styles */
+    .invoice-card {
+        background-color: #1a1a1a;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    .invoice-header {
+        border-bottom: 2px solid rgba(212, 175, 55, 0.4);
+        padding-bottom: 24px;
+    }
+    .stamp-paid {
+        display: inline-block;
+        padding: 8px 18px;
+        border: 3px solid #28a745;
+        color: #28a745;
+        font-family: 'Cinzel', serif, Georgia;
+        font-weight: bold;
+        font-size: 1.5rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        border-radius: 8px;
+        transform: rotate(-8deg);
+        box-shadow: 0 0 12px rgba(40, 167, 69, 0.3);
+    }
+    .stamp-cod {
+        display: inline-block;
+        padding: 8px 18px;
+        border: 3px solid #d4af37;
+        color: #d4af37;
+        font-family: 'Cinzel', serif, Georgia;
+        font-weight: bold;
+        font-size: 1.25rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        border-radius: 8px;
+        transform: rotate(-6deg);
+    }
+
+    /* Print Specific Styles */
+    @media print {
+        body {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-size: 12pt;
+        }
+        header, footer, nav, .navbar, .btn, .no-print, .alert {
+            display: none !important;
+        }
+        .container {
+            max-width: 100% !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .invoice-card {
+            background-color: #ffffff !important;
+            border: 1px solid #000000 !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+            padding: 20px !important;
+        }
+        .invoice-header {
+            border-bottom: 2px solid #000000 !important;
+        }
+        .text-white, .text-white-50, .text-muted {
+            color: #000000 !important;
+        }
+        .text-warning {
+            color: #8c6d1f !important;
+            font-weight: bold !important;
+        }
+        .table {
+            color: #000000 !important;
+            border-color: #000000 !important;
+        }
+        .table-dark {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+        .stamp-paid {
+            border: 3px solid #008000 !important;
+            color: #008000 !important;
+        }
+        .badge {
+            border: 1px solid #000 !important;
+            color: #000 !important;
+            background-color: #fff !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3 no-print">
+    <nav aria-label="breadcrumb" class="breadcrumb-antique-nav">
+        <ol class="breadcrumb-antique">
+            <li class="breadcrumb-item"><a href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+            {% if is_buyer %}
+                <li class="breadcrumb-item"><a href="{% url 'orders:buyer_orders' %}">My Orders</a></li>
+            {% elif is_seller %}
+                <li class="breadcrumb-item"><a href="{% url 'payments:seller_payments' %}">Seller Ledger</a></li>
+            {% elif is_admin %}
+                <li class="breadcrumb-item"><a href="{% url 'payments:admin_payments' %}">Admin Ledger</a></li>
+            {% endif %}
+            <li class="breadcrumb-item"><a href="{% url 'orders:order_detail' order.purchaseid %}">Order #{{ order.purchaseid }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Invoice &amp; Receipt</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+    <!-- Action Controls (Hidden when printing) -->
+    <div class="d-flex flex-wrap justify-content-end align-items-center gap-3 mb-4 no-print">
+
+        <div class="d-flex gap-2">
+            <a href="{% url 'orders:order_detail' order.purchaseid %}" class="btn btn-antique-dark">
+                <i class="bi bi-eye me-1"></i> Track Order Status
+            </a>
+            <button onclick="window.print()" class="btn btn-antique-gold px-4 shadow">
+                <i class="bi bi-printer-fill me-2"></i> Print Official Receipt
+            </button>
+        </div>
+    </div>
+
+    <!-- Official Printable Invoice Container -->
+    <div class="card invoice-card p-4 p-md-5">
+        <!-- Invoice Header -->
+        <div class="invoice-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4 mb-4">
+            <div>
+                <h1 class="brand-font text-warning mb-1" style="font-size: 2.2rem; letter-spacing: 2px;">
+                    ANTIQUE HUB
+                </h1>
+                <p class="text-white-50 small mb-1">Premier Certified Indian Antique Marketplace</p>
+                <p class="text-white-50 small mb-0">
+                    <i class="bi bi-geo-alt me-1 text-warning"></i> 44 Heritage Boulevard, Fort Kochi, Kerala, India &bull; PIN: 682001<br>
+                    <i class="bi bi-envelope me-1 text-warning"></i> support@antiquehub.in &bull; Phone: +91 98470 12345
+                </p>
+            </div>
+
+            <div class="text-md-end">
+                <div class="mb-2">
+                    {% if payment and payment.method == 'Cash on Delivery' %}
+                        <span class="stamp-cod">COD BOOKED</span>
+                    {% else %}
+                        <span class="stamp-paid">PAID &bull; AUTHORIZED</span>
+                    {% endif %}
+                </div>
+                <div class="text-white-50 small">TAX INVOICE NUMBER:</div>
+                <div class="font-monospace fw-bold text-white fs-5">
+                    INV-AH-{{ order.purdate|date:"Ym" }}-{{ order.purchaseid|stringformat:"05d" }}
+                </div>
+                <div class="text-white-50 small mt-1">
+                    Invoice Date: <span class="text-white">{{ order.purdate|date:"d M Y, h:i A" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing & Shipping Information Columns -->
+        <div class="row g-4 mb-4 pb-4 border-bottom border-secondary border-opacity-25">
+            <div class="col-md-6">
+                <h6 class="text-warning text-uppercase brand-font small mb-2">Billed &amp; Consigned To:</h6>
+                <div class="text-white fw-bold fs-6 mb-1">
+                    {{ order.buyer.username }}
+                    {% if order.buyer.userprofile.contactname %} ({{ order.buyer.userprofile.contactname }}){% endif %}
+                </div>
+                <div class="text-white-50 small">
+                    {{ order.buyer.userprofile.address|default:"Collector Address on Record" }}<br>
+                    {% if order.buyer.userprofile.location %}{{ order.buyer.userprofile.location.locname }}, {% endif %}
+                    {% if order.buyer.userprofile.district %}{{ order.buyer.userprofile.district.dist }}, {% endif %}
+                    {% if order.buyer.userprofile.state %}{{ order.buyer.userprofile.state.state }}{% endif %}<br>
+                    <i class="bi bi-telephone me-1 text-warning"></i> {{ order.buyer.userprofile.phone }} &bull;
+                    <i class="bi bi-envelope me-1 text-warning"></i> {{ order.buyer.email }}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h6 class="text-warning text-uppercase brand-font small mb-2">Payment Transaction Details:</h6>
+                <div class="bg-dark bg-opacity-75 p-3 rounded border border-secondary border-opacity-25">
+                    <div class="row g-2 small">
+                        <div class="col-sm-5 text-white-50">Transaction ID:</div>
+                        <div class="col-sm-7 font-monospace fw-bold text-warning text-break">
+                            {{ payment.transaction_ref|default:"TXN-AH-PENDING" }}
+                        </div>
+
+                        <div class="col-sm-5 text-white-50">Payment Method:</div>
+                        <div class="col-sm-7 text-white fw-bold">
+                            {{ payment.method|default:order.pay_status }}
+                        </div>
+
+                        {% if payment.card_last4 %}
+                            <div class="col-sm-5 text-white-50">Masked Card Number:</div>
+                            <div class="col-sm-7 font-monospace text-white">
+                                &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; {{ payment.card_last4 }}
+                                <span class="badge bg-secondary ms-1">{{ payment.card_type }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if payment.bank_name %}
+                            <div class="col-sm-5 text-white-50">Financial Institution:</div>
+                            <div class="col-sm-7 text-white">
+                                {{ payment.bank_name }}
+                            </div>
+                        {% endif %}
+
+                        <div class="col-sm-5 text-white-50">Payment Timestamp:</div>
+                        <div class="col-sm-7 text-white">
+                            {{ payment.pay_date|default:order.purdate|date:"d M Y, h:i A" }}
+                        </div>
+
+                        <div class="col-sm-5 text-white-50">Settlement Status:</div>
+                        <div class="col-sm-7 text-success fw-bold">
+                            {{ order.pay_status }} (Fulfillment: {{ order.status }})
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Itemized Table -->
+        <div class="table-responsive mb-4">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead class="border-secondary border-opacity-50 text-warning small font-serif">
+                    <tr>
+                        <th style="width: 5%;">#</th>
+                        <th style="width: 45%;">Artifact Description &amp; Provenance</th>
+                        <th style="width: 18%;">Curator / Seller</th>
+                        <th class="text-center" style="width: 10%;">Qty</th>
+                        <th class="text-end" style="width: 11%;">Unit Price</th>
+                        <th class="text-end" style="width: 11%;">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="border-secondary border-opacity-25">
+                    {% for p in order_items %}
+                    <tr>
+                        <td class="font-monospace text-white-50">{{ forloop.counter }}</td>
+                        <td>
+                            <div class="fw-bold text-white">{{ p.item.title }}</div>
+                            <small class="text-white-50">
+                                Category: <span class="text-warning">{{ p.item.category.category }}</span> &bull;
+                                Origin: {{ p.item.origin }} (Age: {{ p.item.years_old }} yrs)
+                            </small>
+                        </td>
+                        <td>
+                            <div class="text-white small">
+                                <i class="bi bi-shop me-1 text-warning"></i> {{ p.item.seller.username }}
+                            </div>
+                            <small class="text-white-50">
+                                {% if p.item.seller.userprofile.district %}
+                                    {{ p.item.seller.userprofile.district.dist }}, {{ p.item.seller.userprofile.state.state }}
+                                {% endif %}
+                            </small>
+                        </td>
+                        <td class="text-center font-monospace fw-bold text-white">{{ p.quantity }}</td>
+                        <td class="text-end font-monospace text-white-50">
+                            ₹{{ p.unit_price|floatformat:2 }}
+                        </td>
+                        <td class="text-end font-monospace fw-bold text-white">
+                            ₹{{ p.subtotal|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Ledger Financial Summary Row -->
+        <div class="row justify-content-end mb-4">
+            <div class="col-md-5">
+                <div class="card bg-dark bg-opacity-75 border-secondary border-opacity-25 p-3">
+                    <div class="d-flex justify-content-between text-white-50 small mb-2">
+                        <span>Artifacts Net Amount:</span>
+                        <span class="text-white font-monospace">₹{{ items_subtotal|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-white-50 small mb-2">
+                        <span>Insured Heritage Courier:</span>
+                        {% if order.ship_charge == 0 %}
+                            <span class="text-success font-monospace fw-bold">FREE</span>
+                        {% else %}
+                            <span class="text-white font-monospace">₹{{ order.ship_charge|floatformat:2 }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline pt-2 border-top border-secondary border-opacity-50">
+                        <span class="brand-font text-warning fs-5">Grand Total Paid:</span>
+                        <span class="fs-4 fw-bold text-warning font-monospace">₹{{ order.tot_amt|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sign-Off & Authenticity Watermark Footer -->
+        <div class="pt-4 border-top border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div class="small text-white-50">
+                <i class="bi bi-patch-check-fill text-warning me-1"></i>
+                <strong>Provenance Verified:</strong> All items in this order are certified authentic relics per Antique Hub standard curatorial charters.
+            </div>
+            <div class="text-end small text-white-50">
+                Authorized Curatorial Seal<br>
+                <strong class="text-white">Antique Hub Digital Certification Desk</strong>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
